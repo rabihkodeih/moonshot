@@ -1,3 +1,6 @@
+#  weather condition codes
+# format:
+# code: (description, day_time_icon_code, night_time_icon_code)
 WEATHER_CONDITION_CODES = {
     200: ('thunderstorm with light rain', '11d', '11d'),
     201: ('thunderstorm with rain', '11d', '11d'),
