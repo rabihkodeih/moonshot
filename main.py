@@ -5,8 +5,10 @@ Created on Dec 3, 2018
 '''
 
 import gi
+from utils import text_box
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk, Gio, Gdk
+from datetime import datetime
 
 
 class MainWindow(Gtk.Window):
@@ -15,7 +17,7 @@ class MainWindow(Gtk.Window):
         Gtk.Window.__init__(self, title='CM')
         self.set_border_width(10)
         self.set_default_size(400, 600)
-        #TODO: set fixes size, do not resize
+        self.props.resizable = False
         # header bar
         self.set_titlebar(self.create_header_bar())
         # main container
@@ -23,19 +25,19 @@ class MainWindow(Gtk.Window):
         self.add(main_container)
         # location selector
         location_selector = self.create_location_selector()
-        main_container.pack_start(location_selector, True, True, 0)
-        # todays date box
-        todays_date_box = self.create_todays_date_box()
-        main_container.pack_start(todays_date_box, True, True, 0)
+        main_container.pack_start(location_selector, False, True, 10)
         # weather point box
-        weather_point_box = self.create_weather_point_box()
-        main_container.pack_start(weather_point_box, True, True, 0)
+        weather_point_box = self.create_weather_point_widget()
+        main_container.pack_start(weather_point_box, True, True, 10)
+        # todays date box
+        todays_date_box = self.create_todays_date_widget()
+        main_container.pack_start(todays_date_box, False, True, 10)
         # weather day box
-        weather_day_box = self.create_weather_day_box()
-        main_container.pack_start(weather_day_box, True, True, 0)
+        weather_day_box = self.create_weather_day_widget()
+        main_container.pack_start(weather_day_box, True, True, 10)
         # weather week box
-        weather_week_box = self.create_weather_week_box()
-        main_container.pack_start(weather_week_box, True, True, 0)
+        weather_week_box = self.create_weather_week_widget()
+        main_container.pack_start(weather_week_box, True, True, 10)
         
 
     def create_header_bar(self):
@@ -57,10 +59,15 @@ class MainWindow(Gtk.Window):
         hb.pack_start(settings_btn)
         return hb
 
-    def create_todays_date_box(self):
+    def create_todays_date_widget(self):
         box = Gtk.Box()
         box.override_background_color(Gtk.StateType.NORMAL, Gdk.RGBA(1.0, 0.8, 0.8, 1.0))
-        label = Gtk.Label('todays_date_box') 
+        label = Gtk.Label()
+        today_1, today_2 = datetime.now().strftime('%A'), datetime.now().strftime('%B %d %Y')
+        markup = ('<span size="xx-large" font_weight="bold">%s</span>\n' % today_1 +
+                  '<span size="xx-large" font_weight="light">%s</span>' % today_2)
+        label.set_markup(markup)
+        label.set_justify(Gtk.Justification.LEFT) 
         box.pack_start(label, True, True, 0)
         return box
 
@@ -71,21 +78,31 @@ class MainWindow(Gtk.Window):
         box.pack_start(label, True, True, 0)
         return box
     
-    def create_weather_point_box(self):
+    def create_weather_point_widget(self):
         box = Gtk.Box()
         box.override_background_color(Gtk.StateType.NORMAL, Gdk.RGBA(0.8, 0.8, 1.0, 1.0))
-        label = Gtk.Label('weather_point_box') 
-        box.pack_start(label, True, True, 0)
+        grid = Gtk.Grid()
+        weather_icon = Gtk.Label("weather_icon")
+        temp_box = text_box('23 \u00B0C') 
+        wind_box = text_box('11 kph')
+        humd_box = text_box('95 %')
+        grid.attach(weather_icon, 1, 1, 2, 3)
+        grid.attach(temp_box, 3, 1, 1, 1)
+        grid.attach(wind_box, 3, 2, 1, 1)
+        grid.attach(humd_box, 3, 3, 1, 1)
+        grid.props.valign = Gtk.Align.CENTER
+        grid.props.halign = Gtk.Align.CENTER
+        box.pack_start(grid, True, True, 0)
         return box
     
-    def create_weather_day_box(self):
+    def create_weather_day_widget(self):
         box = Gtk.Box()
         box.override_background_color(Gtk.StateType.NORMAL, Gdk.RGBA(1.0, 1.0, 0.8, 1.0))
         label = Gtk.Label('weather_day_box') 
         box.pack_start(label, True, True, 0)
         return box
 
-    def create_weather_week_box(self):
+    def create_weather_week_widget(self):
         box = Gtk.Box()
         box.override_background_color(Gtk.StateType.NORMAL, Gdk.RGBA(1.0, 0.8, 1.0, 1.0))
         label = Gtk.Label('weather_week_box') 
