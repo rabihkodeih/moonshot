@@ -6,7 +6,7 @@ Created on Dec 3, 2018
 
 import gi
 gi.require_version('Gtk', '3.0')
-from gi.repository import Gtk
+from gi.repository import Gtk, Gio
 
 
 class MainWindow(Gtk.Window):
@@ -14,35 +14,40 @@ class MainWindow(Gtk.Window):
     def __init__(self):
         Gtk.Window.__init__(self, title='CM')
         self.set_border_width(10)
-        # set default size
-        listbox = Gtk.ListBox()
-        listbox.set_selection_mode(Gtk.SelectionMode.NONE)
-        self.add(listbox)
-        
-        # Checkbox
-        row_1 = Gtk.ListBoxRow()
-        box_1 = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=100)
-        row_1.add(box_1)
-        label = Gtk.Label("Check if you love CBs")
-        check = Gtk.CheckButton()
-        box_1.pack_start(label, False, True, 0)
-        box_1.pack_start(check, True, True, 50)
-        listbox.add(row_1)
+        self.set_default_size(400, 600)
+        #TODO: set fixes size, do not resize
+        self.header_bar = self.create_header_bar()
+        self.set_titlebar(self.header_bar)
 
-        # Checkbox
-        row_2 = Gtk.ListBoxRow()
-        box_2 = Gtk.Box(orientation=Gtk.Orientation.HORIZONTAL, spacing=100)
-        row_2.add(box_2)
-        label = Gtk.Label("B making machine")
-        switch = Gtk.Switch()
-        box_2.pack_start(label, False, True, 0)
-        box_2.pack_start(switch, True, True, 0)
-        listbox.add(row_2)
+    def create_header_bar(self):
+        hb = Gtk.HeaderBar()
+        hb.set_decoration_layout("menu:close")
+        hb.set_show_close_button(True)
+        hb.props.title = "Moonshot"
+        
+        # refresh button
+        icon = Gio.ThemedIcon(name="view-refresh-symbolic")
+        refresh_btn = Gtk.Button(None, image=Gtk.Image.new_from_gicon(icon, Gtk.IconSize.BUTTON))
+        hb.pack_start(refresh_btn)
+
+        # temperature chart button
+        icon = Gio.ThemedIcon(name="utilities-system-monitor-symbolic")
+        tmpchart_btn = Gtk.Button(None, image=Gtk.Image.new_from_gicon(icon, Gtk.IconSize.BUTTON))
+        hb.pack_start(tmpchart_btn)
+
+        # settings button
+        icon = Gio.ThemedIcon(name="emblem-system-symbolic")
+        settings_btn = Gtk.Button(None, image = Gtk.Image.new_from_gicon(icon, Gtk.IconSize.BUTTON))
+        hb.pack_start(settings_btn)
+        
+        return hb
+
         
 
+      
 def launch_main_window():
     win = MainWindow()
-    # win.connect("destroy", Gtk.main_quit)
+    win.connect("destroy", Gtk.main_quit)
     win.connect("delete-event", Gtk.main_quit)
     win.show_all()
     Gtk.main()
@@ -51,23 +56,17 @@ def launch_main_window():
 if __name__ == '__main__':
     print('Starting...\n')
     
-    
-    
-    from pprint import pprint
-    import requests
-    r = requests.get()
-    pprint(r.json())
-    
+    launch_main_window()
         
     print('\nDone.')
     
 
 # end of file
 
-#TODO: login into soshace mail and check message, document all important info of sochace into dropbox
+#TODO: https://stackoverflow.com/questions/19452797/draw-a-svg-image-in-gtk3-from-svg-source-in-python
 
-# Specs: implement the main test app using the following specs:
-# Locations
+# SPECS:
+# Locations (1+)
 # Display weather for at least 24 hours ahead
 # refresh/update for weather data
 # keep historical records
