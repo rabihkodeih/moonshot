@@ -7,9 +7,9 @@ Created on Dec 8, 2018
 
 import os
 import gi
-from datetime import datetime
 from utils import svg_image_widget
 from settings import WEATHER_ICONS_PATH
+from app_state import get_weather_info_data
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk
 
@@ -71,13 +71,12 @@ class WeatherInfoWidget(object):
         return comp
     
     def update(self):
-        #TODO: get relevant state from app_state
-        today = datetime.now().strftime('%A,%B %d %Y')
-        self.widget_weather_icon.update(os.path.join(WEATHER_ICONS_PATH, '%s.svg' % '02d'))
-        self.widget_temperature.update('23 \u00B0C')        
-        self.widget_wind_speed.update('11 kph')
-        self.widget_humidity.update('95 %')
-        self.widget_todays_date.update(today)
+        data = get_weather_info_data()
+        self.widget_weather_icon.update(os.path.join(WEATHER_ICONS_PATH, '%s.svg' % data['weather_icon_code']))
+        self.widget_temperature.update('%s \u00B0C' % data['temperature'])        
+        self.widget_wind_speed.update('%s kph' % data['wind_speed'])
+        self.widget_humidity.update('%s %%' % data['humidity'])
+        self.widget_todays_date.update(data['todays_date'])
         
 
 # end of file

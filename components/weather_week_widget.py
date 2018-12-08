@@ -9,11 +9,15 @@ import os
 import gi
 from utils import svg_image_widget
 from settings import WEATHER_ICONS_PATH
+from app_state import get_weather_week_data
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk
 
 
 class WeatherWeekWidget(object):
+
+    def __init__(self):
+        self.widgets_periods = []
 
     def period_widget(self):
         # period
@@ -47,9 +51,6 @@ class WeatherWeekWidget(object):
         period.update = update
         return period
 
-    def __init__(self):
-        self.widgets_periods = []
-
     def component(self):
         comp = Gtk.Box()
         for _ in range(7):
@@ -60,14 +61,7 @@ class WeatherWeekWidget(object):
         return comp
     
     def update(self):
-        #TODO: get relevant state from app_state
-        week_data = [('MON', '01d', 31, 23),
-                     ('TUE', '02d', 33, 24),
-                     ('WED', '09d', 32, 24),
-                     ('THU', '13d', 32, 22),
-                     ('FRI', '04d', 33, 21),
-                     ('SAT', '50d', 34, 25),
-                     ('SUN', '02d', 33, 24),]
+        week_data = get_weather_week_data()
         for data, widget in zip(week_data, self.widgets_periods):
             widget.update(*data)
     
