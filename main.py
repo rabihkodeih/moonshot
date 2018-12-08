@@ -5,9 +5,10 @@ Created on Dec 3, 2018
 '''
 
 import gi
-from utils import text_box
+from utils import create_weather_data_widget, create_image_form_svg,\
+    debug_background
 gi.require_version('Gtk', '3.0')
-from gi.repository import Gtk, Gio, Gdk
+from gi.repository import Gtk, Gio
 from datetime import datetime
 
 
@@ -18,24 +19,17 @@ class MainWindow(Gtk.Window):
         self.set_border_width(10)
         self.set_default_size(400, 600)
         self.props.resizable = False
-        # header bar
         self.set_titlebar(self.create_header_bar())
-        # main container
         main_container = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
         self.add(main_container)
-        # location selector
         location_selector = self.create_location_selector()
         main_container.pack_start(location_selector, False, True, 10)
-        # weather point box
-        weather_point_box = self.create_weather_point_widget()
-        main_container.pack_start(weather_point_box, True, True, 10)
-        # todays date box
-        todays_date_box = self.create_todays_date_widget()
-        main_container.pack_start(todays_date_box, False, True, 10)
-        # weather day box
-        weather_day_box = self.create_weather_day_widget()
-        main_container.pack_start(weather_day_box, True, True, 10)
-        # weather week box
+        weather_point_widget = self.create_weather_info_widget()
+        main_container.pack_start(weather_point_widget, True, True, 10)
+        todays_date_widget = self.create_todays_date_widget()
+        main_container.pack_start(todays_date_widget, False, True, 10)
+        weather_day_widget = self.create_weather_day_widget()
+        main_container.pack_start(weather_day_widget, True, True, 10)
         weather_week_box = self.create_weather_week_widget()
         main_container.pack_start(weather_week_box, True, True, 10)
         
@@ -59,9 +53,9 @@ class MainWindow(Gtk.Window):
         hb.pack_start(settings_btn)
         return hb
 
+    @debug_background((0.8, 0.8, 1.0, 1.0), True)
     def create_todays_date_widget(self):
         box = Gtk.Box()
-        box.override_background_color(Gtk.StateType.NORMAL, Gdk.RGBA(1.0, 0.8, 0.8, 1.0))
         label = Gtk.Label()
         today_1, today_2 = datetime.now().strftime('%A'), datetime.now().strftime('%B %d %Y')
         markup = ('<span size="xx-large" font_weight="bold">%s</span>\n' % today_1 +
@@ -71,40 +65,42 @@ class MainWindow(Gtk.Window):
         box.pack_start(label, True, True, 0)
         return box
 
+    @debug_background((0.8, 0.8, 1.0, 1.0), True)
     def create_location_selector(self):
+        #TODO: implement
         box = Gtk.Box()
-        box.override_background_color(Gtk.StateType.NORMAL, Gdk.RGBA(0.8, 1.0, 0.8, 1.0))
         label = Gtk.Label('location_selector') 
         box.pack_start(label, True, True, 0)
         return box
     
-    def create_weather_point_widget(self):
+    @debug_background((0.8, 0.8, 1.0, 1.0), True)
+    def create_weather_info_widget(self):
         box = Gtk.Box()
-        box.override_background_color(Gtk.StateType.NORMAL, Gdk.RGBA(0.8, 0.8, 1.0, 1.0))
         grid = Gtk.Grid()
-        weather_icon = Gtk.Label("weather_icon")
-        temp_box = text_box('23 \u00B0C') 
-        wind_box = text_box('11 kph')
-        humd_box = text_box('95 %')
-        grid.attach(weather_icon, 1, 1, 2, 3)
-        grid.attach(temp_box, 3, 1, 1, 1)
-        grid.attach(wind_box, 3, 2, 1, 1)
-        grid.attach(humd_box, 3, 3, 1, 1)
+        weather_image = create_image_form_svg(
+            "assets/weather_icons/02d.svg",
+            margins=(25, 10, 0, 0)
+        )
+        weather_data_widget = create_weather_data_widget('23 \u00B0C', '11 kph', '95 %')
+        grid.attach(weather_image, 1, 1, 1, 3)
+        grid.attach(weather_data_widget, 3, 3, 1, 1)
         grid.props.valign = Gtk.Align.CENTER
         grid.props.halign = Gtk.Align.CENTER
         box.pack_start(grid, True, True, 0)
         return box
     
+    @debug_background((0.8, 0.8, 1.0, 1.0), True)
     def create_weather_day_widget(self):
+        #TODO: implement
         box = Gtk.Box()
-        box.override_background_color(Gtk.StateType.NORMAL, Gdk.RGBA(1.0, 1.0, 0.8, 1.0))
         label = Gtk.Label('weather_day_box') 
         box.pack_start(label, True, True, 0)
         return box
 
+    @debug_background((0.8, 0.8, 1.0, 1.0), True)
     def create_weather_week_widget(self):
+        #TODO: implement
         box = Gtk.Box()
-        box.override_background_color(Gtk.StateType.NORMAL, Gdk.RGBA(1.0, 0.8, 1.0, 1.0))
         label = Gtk.Label('weather_week_box') 
         box.pack_start(label, True, True, 0)
         return box
@@ -128,7 +124,7 @@ if __name__ == '__main__':
 
 # end of file
 
-#TODO: https://stackoverflow.com/questions/19452797/draw-a-svg-image-in-gtk3-from-svg-source-in-python
+
 
 # SPECS:
 # Locations (1+)
@@ -148,7 +144,9 @@ if __name__ == '__main__':
 
 
 
+#TODO: https://stackoverflow.com/questions/19452797/draw-a-svg-image-in-gtk3-from-svg-source-in-python
 #TODO: apply PEP8 formating
+#TODO: add documentation where it counts
 
 
 

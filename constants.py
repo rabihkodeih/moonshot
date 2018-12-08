@@ -1,6 +1,8 @@
-#  weather condition codes
+#===============================================================================
+# Weather Condition Codes
 # format:
 # code: (description, day_time_icon_code, night_time_icon_code)
+#===============================================================================
 WEATHER_CONDITION_CODES = {
     200: ('thunderstorm with light rain', '11d', '11d'),
     201: ('thunderstorm with rain', '11d', '11d'),
@@ -59,6 +61,9 @@ WEATHER_CONDITION_CODES = {
 }
 
 
+#===============================================================================
+# Gnome Icon Theme Symbolic
+#===============================================================================
 GNOME_ICON_THEME_SYMBOLIC = [
     'action-unavailable-symbolic',
     'bookmark-add-symbolic',
