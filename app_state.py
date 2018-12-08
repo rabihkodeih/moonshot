@@ -5,13 +5,14 @@ Created on Dec 8, 2018
 '''
 
 from datetime import datetime
+import random
 
 
 def get_weather_info_data():
-    #TODO: model timezones
+    #TODO: get todays_date according to the timezone of the currently selected loation
     data = {'weather_icon_code': '02d',
             'temperature': 23,
-            'wind_speed': 11,
+            'wind_speed': random.randrange(5, 20),# 11,
             'humidity': 76,
             'todays_date': datetime.now().strftime('%A,%B %d %Y')}
     return data
@@ -36,7 +37,7 @@ def get_weather_week_data():
                  ('THU', '13d', 32, 22),
                  ('FRI', '04d', 33, 21),
                  ('SAT', '50d', 34, 25),
-                 ('SUN', '02d', 33, 24),]
+                 ('SUN', '02d', 33, 24)]
     return week_data
 
 

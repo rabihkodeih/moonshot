@@ -5,6 +5,7 @@ Created on Dec 8, 2018
 '''
 
 import random
+import threading
 import gi
 from functools import wraps
 gi.require_version('Gtk', '3.0')
@@ -44,6 +45,16 @@ def svg_image_widget(size=128, margins=None):
         image.set_margin_bottom(bottom)
         image.set_margin_right(right)
     return image
+
+
+def new_thread(func):
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        thread = threading.Thread(target=func, args=args, kwargs=kwargs)
+        thread.daemon = True
+        thread.start()
+        return thread
+    return wrapper
 
 
 # end of file

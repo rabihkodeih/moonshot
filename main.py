@@ -5,12 +5,13 @@ Created on Dec 3, 2018
 '''
 
 import gi
-from utils import debug_background
+from utils import debug_background, new_thread
 from components.weather_info_widget import WeatherInfoWidget
 from components.weather_day_widget import WeatherDayWidget
 from components.weather_week_widget import WeatherWeekWidget
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk, Gio
+import threading
 
 
 class MainWindow(Gtk.Window):
@@ -22,7 +23,7 @@ class MainWindow(Gtk.Window):
         self.weather_day_widget = None
         self.weather_week_widget = None
         self.init_components()
-        
+    
     def init_components(self):
         # window initialization
         self.set_border_width(10)
@@ -63,12 +64,21 @@ class MainWindow(Gtk.Window):
         hb.pack_start(settings_btn)
         return hb
 
+    @new_thread
+    def long_running_task(self, widget):
+        print('long runnign task start')
+        print(widget)
+        import time
+        time.sleep(5)
+        print('long runnign task end')
+
     @debug_background(True)
     def create_location_selector(self):
         #TODO: implement
         box = Gtk.Box()
-        label = Gtk.Label('location_selector') 
-        box.pack_start(label, True, True, 0)
+        button = Gtk.Button('location_selector') 
+        button.connect("clicked", self.long_running_task)
+        box.pack_start(button, True, True, 0)
         return box
         
     def update(self):
@@ -78,19 +88,19 @@ class MainWindow(Gtk.Window):
         self.weather_week_widget.update()
 
       
-def launch_main_window():
+def app_main():
     win = MainWindow()
     win.connect("destroy", Gtk.main_quit)
     win.connect("delete-event", Gtk.main_quit)
-    win.show_all()
+    win.show_all() # FIXME: move this into a separate thread
     win.update()
-    Gtk.main()
-
+    
 
 if __name__ == '__main__':
     print('Starting...\n')
     
-    launch_main_window()
+    app_main()
+    Gtk.main()
 
     print('\nDone.')
     
