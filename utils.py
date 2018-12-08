@@ -28,24 +28,6 @@ def debug_background(show):
     return real_decorator
 
 
-def create_weather_data_widget(*info_list, font_size='x-large', font_weight='light', margins=None):
-    container = Gtk.VBox()
-    for info in info_list:
-        box = Gtk.Box()
-        label = Gtk.Label()
-        markup = '<span font_size="%s" font_weight="%s">%s</span>' % (font_size, font_weight, info)
-        label.set_markup(markup)
-        if margins:
-            top, right, bottom, left = margins
-            label.set_margin_top(top)
-            label.set_margin_left(left)
-            label.set_margin_bottom(bottom)
-            label.set_margin_right(right)
-        box.add(label)
-        container.pack_start(box, False, True, 0)
-    return container
-
-
 def create_image_form_svg(svg_path, size=128, margins=None):
     width = -1
     height = size
