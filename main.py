@@ -5,8 +5,10 @@ Created on Dec 3, 2018
 '''
 
 import gi
-from utils import create_weather_data_widget, create_image_form_svg,\
-    debug_background
+from utils import create_weather_data_widget
+from utils import create_image_form_svg
+from utils import debug_background
+from utils import create_weather_week_unit_widget
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk, Gio
 from datetime import datetime
@@ -25,13 +27,11 @@ class MainWindow(Gtk.Window):
         location_selector = self.create_location_selector()
         main_container.pack_start(location_selector, False, True, 10)
         weather_point_widget = self.create_weather_info_widget()
-        main_container.pack_start(weather_point_widget, True, True, 10)
-        todays_date_widget = self.create_todays_date_widget()
-        main_container.pack_start(todays_date_widget, False, True, 10)
+        main_container.pack_start(weather_point_widget, False, True, 10)
         weather_day_widget = self.create_weather_day_widget()
         main_container.pack_start(weather_day_widget, True, True, 10)
         weather_week_box = self.create_weather_week_widget()
-        main_container.pack_start(weather_week_box, True, True, 10)
+        main_container.pack_start(weather_week_box, False, True, 10)
         
 
     def create_header_bar(self):
@@ -53,19 +53,7 @@ class MainWindow(Gtk.Window):
         hb.pack_start(settings_btn)
         return hb
 
-    @debug_background((0.8, 0.8, 1.0, 1.0), True)
-    def create_todays_date_widget(self):
-        box = Gtk.Box()
-        label = Gtk.Label()
-        today_1, today_2 = datetime.now().strftime('%A'), datetime.now().strftime('%B %d %Y')
-        markup = ('<span size="xx-large" font_weight="bold">%s</span>\n' % today_1 +
-                  '<span size="xx-large" font_weight="light">%s</span>' % today_2)
-        label.set_markup(markup)
-        label.set_justify(Gtk.Justification.LEFT) 
-        box.pack_start(label, True, True, 0)
-        return box
-
-    @debug_background((0.8, 0.8, 1.0, 1.0), True)
+    @debug_background(True)
     def create_location_selector(self):
         #TODO: implement
         box = Gtk.Box()
@@ -73,23 +61,33 @@ class MainWindow(Gtk.Window):
         box.pack_start(label, True, True, 0)
         return box
     
-    @debug_background((0.8, 0.8, 1.0, 1.0), True)
+    @debug_background(True)
     def create_weather_info_widget(self):
-        box = Gtk.Box()
+        box = Gtk.VBox()
+        # weather info
         grid = Gtk.Grid()
         weather_image = create_image_form_svg(
             "assets/weather_icons/02d.svg",
-            margins=(25, 10, 0, 0)
+            size = 128 + 32,
+            margins=(25, 20, 0, 0)
         )
         weather_data_widget = create_weather_data_widget('23 \u00B0C', '11 kph', '95 %')
         grid.attach(weather_image, 1, 1, 1, 3)
         grid.attach(weather_data_widget, 3, 3, 1, 1)
         grid.props.valign = Gtk.Align.CENTER
         grid.props.halign = Gtk.Align.CENTER
-        box.pack_start(grid, True, True, 0)
+        box.pack_start(grid, False, True, 0)
+        # todays date
+        label = Gtk.Label()
+        today_1, today_2 = datetime.now().strftime('%A'), datetime.now().strftime('%B %d %Y')
+        markup = ('<span font_size="xx-large" font_weight="bold">%s</span>\n' % today_1 +
+                  '<span font_size="xx-large" font_weight="light">%s</span>' % today_2)
+        label.set_markup(markup)
+        label.set_justify(Gtk.Justification.LEFT) 
+        box.pack_start(label, False, True, 0)
         return box
     
-    @debug_background((0.8, 0.8, 1.0, 1.0), True)
+    @debug_background(True)
     def create_weather_day_widget(self):
         #TODO: implement
         box = Gtk.Box()
@@ -97,13 +95,22 @@ class MainWindow(Gtk.Window):
         box.pack_start(label, True, True, 0)
         return box
 
-    @debug_background((0.8, 0.8, 1.0, 1.0), True)
+    @debug_background(False)
     def create_weather_week_widget(self):
-        #TODO: implement
         box = Gtk.Box()
-        label = Gtk.Label('weather_week_box') 
-        box.pack_start(label, True, True, 0)
+        week_data = [('MON', '01d', 31, 23),
+                     ('TUE', '02d', 33, 24),
+                     ('WED', '09d', 32, 24),
+                     ('THU', '13d', 32, 22),
+                     ('FRI', '04d', 33, 21),
+                     ('SAT', '50d', 34, 25),
+                     ('SUN', '02d', 33, 24),]
+        for data in week_data:
+            unit = create_weather_week_unit_widget(*data)
+            box.pack_start(unit, True, True, 0)
         return box
+
+    
 
       
 def launch_main_window():
@@ -118,7 +125,7 @@ if __name__ == '__main__':
     print('Starting...\n')
     
     launch_main_window()
-        
+
     print('\nDone.')
     
 
