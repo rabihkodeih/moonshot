@@ -46,21 +46,4 @@ def svg_image_widget(size=128, margins=None):
     return image
 
 
-# TODO: deprecate and remove
-def create_image_form_svg(svg_path, size=128, margins=None):
-    width = -1
-    height = size
-    preserve_aspect_ratio = True
-    pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_scale(svg_path, width, height, preserve_aspect_ratio)
-    image = Gtk.Image()
-    image.set_from_pixbuf(pixbuf)
-    if margins:
-        top, right, bottom, left = margins
-        image.set_margin_top(top)
-        image.set_margin_left(left)
-        image.set_margin_bottom(bottom)
-        image.set_margin_right(right)
-    return image
-
-
 # end of file

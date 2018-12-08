@@ -75,7 +75,7 @@ class MainWindow(Gtk.Window):
         # FIXME: self.location_selector.update()
         self.weather_info_widget.update()
         self.weather_day_widget.update()
-        # FIXME: self.weather_week_widget.update()
+        self.weather_week_widget.update()
 
       
 def launch_main_window():
