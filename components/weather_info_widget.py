@@ -7,61 +7,75 @@ Created on Dec 8, 2018
 
 import gi
 from datetime import datetime
-from utils import create_image_form_svg
+from utils import svg_image_widget
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk
 
 
 class WeatherInfoWidget(object):
-    
-    @staticmethod
-    def info_widget(*info_list, font_size='x-large', font_weight='light', margins=None):
-        container = Gtk.VBox()
-        for info in info_list:
-            box = Gtk.Box()
-            label = Gtk.Label()
-            markup = '<span font_size="%s" font_weight="%s">%s</span>' % (font_size, font_weight, info)
-            label.set_markup(markup)
-            if margins:
-                top, right, bottom, left = margins
-                label.set_margin_top(top)
-                label.set_margin_left(left)
-                label.set_margin_bottom(bottom)
-                label.set_margin_right(right)
-            box.add(label)
-            container.pack_start(box, False, True, 0)
-        return container
-    
+        
     def __init__(self):
-        box = Gtk.VBox()
+        self.widget_weather_icon = None
+        self.widget_temperature = None
+        self.widget_wind_speed = None
+        self.widget_humidity = None
+        self.widget_todays_date = None
+
+    def text_widget(self, font_size='x-large', font_weight='light', margins=None):
+        widget = Gtk.Box()
+        label = Gtk.Label()
+        if margins:
+            top, right, bottom, left = margins
+            label.set_margin_top(top)
+            label.set_margin_left(left)
+            label.set_margin_bottom(bottom)
+            label.set_margin_right(right)
+        widget.add(label)
+        markup = '<span font_size="%s" font_weight="%s">%s</span>'
+        widget.update = lambda text: label.set_markup(markup % (font_size, font_weight, text))
+        return widget
+
+    def component(self):        
+        comp = Gtk.VBox()
         # weather info
         grid = Gtk.Grid()
-        weather_image = create_image_form_svg(
-            "assets/weather_icons/02d.svg",
+        self.widget_weather_icon = svg_image_widget(
             size = 128 + 32,
             margins=(25, 20, 0, 0)
         )
-        weather_data_widget = WeatherInfoWidget.info_widget('23 \u00B0C', '11 kph', '95 %')
-        grid.attach(weather_image, 1, 1, 1, 3)
+        weather_data_widget = Gtk.VBox()
+        self.widget_temperature = self.text_widget()
+        self.widget_wind_speed = self.text_widget()
+        self.widget_humidity = self.text_widget()
+        weather_data_widget.pack_start(self.widget_temperature, False, True, 0)
+        weather_data_widget.pack_start(self.widget_wind_speed, False, True, 0)
+        weather_data_widget.pack_start(self.widget_humidity, False, True, 0)
+        grid.attach(self.widget_weather_icon, 1, 1, 1, 3)
         grid.attach(weather_data_widget, 3, 3, 1, 1)
         grid.props.valign = Gtk.Align.CENTER
         grid.props.halign = Gtk.Align.CENTER
-        box.pack_start(grid, False, True, 0)
+        comp.pack_start(grid, False, True, 0)
         # todays date
-        label = Gtk.Label()
-        today_1, today_2 = datetime.now().strftime('%A'), datetime.now().strftime('%B %d %Y')
-        markup = ('<span font_size="xx-large" font_weight="bold">%s</span>\n' % today_1 +
-                  '<span font_size="xx-large" font_weight="light">%s</span>' % today_2)
-        label.set_markup(markup)
-        label.set_justify(Gtk.Justification.LEFT) 
-        box.pack_start(label, False, True, 0)
-        self.box = box
+        self.widget_todays_date = Gtk.Label()
+        def update_todays_date(today):
+            today_1, today_2 = today.split(',')
+            markup = ('<span font_size="xx-large" font_weight="bold">%s</span>\n' % today_1 +
+                      '<span font_size="xx-large" font_weight="light">%s</span>' % today_2)
+            self.widget_todays_date.set_markup(markup)
+        self.widget_todays_date.update = update_todays_date
+        self.widget_todays_date.set_justify(Gtk.Justification.LEFT) 
+        comp.pack_start(self.widget_todays_date, False, True, 0)
+        comp.update = self.update
+        return comp
+    
+    def update(self):
+        #TODO: get relevant state from app_state
+        today = datetime.now().strftime('%A,%B %d %Y')
+        self.widget_weather_icon.update("assets/weather_icons/02d.svg")
+        self.widget_temperature.update('23 \u00B0C')        
+        self.widget_wind_speed.update('11 kph')
+        self.widget_humidity.update('95 %')
+        self.widget_todays_date.update(today)
+        
 
-    def component(self):
-        return self.box
-    
-    def refresh(self):
-        pass
-    
-    
 # end of file

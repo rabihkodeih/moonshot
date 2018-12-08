@@ -6,7 +6,6 @@ Created on Dec 3, 2018
 
 import gi
 from utils import debug_background
-from utils import create_weather_period_widget
 from components.weather_info_widget import WeatherInfoWidget
 from components.weather_day_widget import WeatherDayWidget
 from components.weather_week_widget import WeatherWeekWidget
@@ -24,20 +23,19 @@ class MainWindow(Gtk.Window):
         self.set_titlebar(self.create_header_bar())
         main_container = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
         self.add(main_container)
-        
+        # location selector
         location_selector = self.create_location_selector()
-        
         main_container.pack_start(location_selector, False, True, 10)
+        # weather info widget
         weather_info_widget = WeatherInfoWidget().component()
-        
         main_container.pack_start(weather_info_widget, True, True, 10)
+        weather_info_widget.update()
+        # weather day widget
         weather_day_widget = WeatherDayWidget().component()
-        
         main_container.pack_start(weather_day_widget, False, True, 50)
-        weather_week_box = WeatherWeekWidget().component()
-        
-        main_container.pack_start(weather_week_box, False, True, 10)
-        
+        # weathe week widget
+        weather_week_widget = WeatherWeekWidget().component()
+        main_container.pack_start(weather_week_widget, False, True, 10)
 
     def create_header_bar(self):
         hb = Gtk.HeaderBar()
@@ -66,7 +64,6 @@ class MainWindow(Gtk.Window):
         box.pack_start(label, True, True, 0)
         return box
         
-
       
 def launch_main_window():
     win = MainWindow()
