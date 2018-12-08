@@ -17,25 +17,32 @@ class MainWindow(Gtk.Window):
     
     def __init__(self):
         Gtk.Window.__init__(self, title='CM')
+        self.location_selector = None
+        self.weather_info_widget = None
+        self.weather_day_widget = None
+        self.weather_week_widget = None
+        self.init_components()
+        
+    def init_components(self):
+        # window initialization
         self.set_border_width(10)
         self.set_default_size(400, 600)
         self.props.resizable = False
         self.set_titlebar(self.create_header_bar())
-        main_container = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
-        self.add(main_container)
+        self.main_container = Gtk.Box(orientation=Gtk.Orientation.VERTICAL)
+        self.add(self.main_container)
         # location selector
-        location_selector = self.create_location_selector()
-        main_container.pack_start(location_selector, False, True, 10)
+        self.location_selector = self.create_location_selector()
+        self.main_container.pack_start(self.location_selector, False, True, 10)
         # weather info widget
-        weather_info_widget = WeatherInfoWidget().component()
-        main_container.pack_start(weather_info_widget, True, True, 10)
-        weather_info_widget.update()
+        self.weather_info_widget = WeatherInfoWidget().component()
+        self.main_container.pack_start(self.weather_info_widget, True, True, 10)
         # weather day widget
-        weather_day_widget = WeatherDayWidget().component()
-        main_container.pack_start(weather_day_widget, False, True, 50)
+        self.weather_day_widget = WeatherDayWidget().component()
+        self.main_container.pack_start(self.weather_day_widget, False, True, 50)
         # weathe week widget
-        weather_week_widget = WeatherWeekWidget().component()
-        main_container.pack_start(weather_week_widget, False, True, 10)
+        self.weather_week_widget = WeatherWeekWidget().component()
+        self.main_container.pack_start(self.weather_week_widget, False, True, 10)
 
     def create_header_bar(self):
         hb = Gtk.HeaderBar()
@@ -64,12 +71,19 @@ class MainWindow(Gtk.Window):
         box.pack_start(label, True, True, 0)
         return box
         
+    def update(self):
+        # FIXME: self.location_selector.update()
+        self.weather_info_widget.update()
+        self.weather_day_widget.update()
+        # FIXME: self.weather_week_widget.update()
+
       
 def launch_main_window():
     win = MainWindow()
     win.connect("destroy", Gtk.main_quit)
     win.connect("delete-event", Gtk.main_quit)
     win.show_all()
+    win.update()
     Gtk.main()
 
 
