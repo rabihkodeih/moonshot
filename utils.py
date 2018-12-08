@@ -62,32 +62,35 @@ def create_image_form_svg(svg_path, size=128, margins=None):
     return image
 
 
-def create_weather_week_unit_widget(day, icon_code, day_temp, night_temp):
+def create_weather_period_widget(period, icon_code, temp_1, temp_2=None):
     # day label
-    day_label = Gtk.Label()
-    markup = '<span font_stretch="ultracondensed" font_size="large" font_weight="light">%s</span>' % day
-    day_label.set_markup(markup)
+    period_label = Gtk.Label()
+    f_size = "12480" if temp_2 is None else "large"
+    markup = '<span font_stretch="ultracondensed" font_size="%s" font_weight="light">%s</span>' % (f_size, period)
+    period_label.set_markup(markup)
     # weather image
+    i_size = 32 if temp_2 is None else 40
     weather_image = create_image_form_svg(
         "assets/weather_icons/%s.svg" % icon_code,
-        size=36,
+        size=i_size,
         margins=(5, 0, 5, 0)
     )
     # temp box
     temp_box = Gtk.Box()
-    day_temp_label = Gtk.Label()
-    markup = '<span font_family="arial narrow" font_size="large" font_weight="light">%s\u00B0</span>' % day_temp
-    day_temp_label.set_markup(markup)
-    day_temp_label.set_margin_left(6)
-    temp_box.pack_start(day_temp_label, True, True, 0)
-    night_temp_label = Gtk.Label()
-    markup = '<span font_family="arial narrow" font_size="large" font_weight="light">%s\u00B0</span>' % night_temp
-    night_temp_label.set_markup(markup)
-    night_temp_label.set_margin_right(5)
-    temp_box.pack_end(night_temp_label, True, True, 0)
+    temp_1_label = Gtk.Label()
+    markup = '<span font_family="arial narrow" font_size="large" font_weight="light">%s\u00B0</span>' % temp_1
+    temp_1_label.set_markup(markup)
+    temp_box.pack_start(temp_1_label, True, True, 0)
+    if temp_2 is not None:
+        temp_1_label.set_margin_left(6)
+        temp_2_label = Gtk.Label()
+        markup = '<span font_family="arial narrow" font_size="large" font_weight="light">%s\u00B0</span>' % temp_2
+        temp_2_label.set_markup(markup)
+        temp_2_label.set_margin_right(5)
+        temp_box.pack_end(temp_2_label, True, True, 0)
     # container
     container = Gtk.VBox()
-    container.pack_start(day_label, False, True, 0)
+    container.pack_start(period_label, False, True, 0)
     container.pack_start(weather_image, False, True, 0)
     container.pack_start(temp_box, False, True, 0)
     return container

@@ -5,13 +5,13 @@ Created on Dec 3, 2018
 '''
 
 import gi
-from utils import create_weather_data_widget
-from utils import create_image_form_svg
+from datetime import datetime
 from utils import debug_background
-from utils import create_weather_week_unit_widget
+from utils import create_image_form_svg
+from utils import create_weather_data_widget
+from utils import create_weather_period_widget
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk, Gio
-from datetime import datetime
 
 
 class MainWindow(Gtk.Window):
@@ -27,9 +27,9 @@ class MainWindow(Gtk.Window):
         location_selector = self.create_location_selector()
         main_container.pack_start(location_selector, False, True, 10)
         weather_point_widget = self.create_weather_info_widget()
-        main_container.pack_start(weather_point_widget, False, True, 10)
+        main_container.pack_start(weather_point_widget, True, True, 10)
         weather_day_widget = self.create_weather_day_widget()
-        main_container.pack_start(weather_day_widget, True, True, 10)
+        main_container.pack_start(weather_day_widget, False, True, 50)
         weather_week_box = self.create_weather_week_widget()
         main_container.pack_start(weather_week_box, False, True, 10)
         
@@ -61,7 +61,7 @@ class MainWindow(Gtk.Window):
         box.pack_start(label, True, True, 0)
         return box
     
-    @debug_background(True)
+    @debug_background(False)
     def create_weather_info_widget(self):
         box = Gtk.VBox()
         # weather info
@@ -87,12 +87,20 @@ class MainWindow(Gtk.Window):
         box.pack_start(label, False, True, 0)
         return box
     
-    @debug_background(True)
+    @debug_background(False)
     def create_weather_day_widget(self):
-        #TODO: implement
         box = Gtk.Box()
-        label = Gtk.Label('weather_day_box') 
-        box.pack_start(label, True, True, 0)
+        week_data = [('3 AM', '02d', 24),
+                     ('6 AM', '09d', 24),
+                     ('9 AM', '13d', 22),
+                     ('NOON', '04d', 21),
+                     ('3 PM', '50d', 34),
+                     ('6 PM', '02d', 33),
+                     ('9 PM', '02d', 33),
+                     ('MIDN', '01d', 31)]
+        for data in week_data:
+            unit = create_weather_period_widget(*data)
+            box.pack_start(unit, True, True, 0)
         return box
 
     @debug_background(False)
@@ -106,7 +114,7 @@ class MainWindow(Gtk.Window):
                      ('SAT', '50d', 34, 25),
                      ('SUN', '02d', 33, 24),]
         for data in week_data:
-            unit = create_weather_week_unit_widget(*data)
+            unit = create_weather_period_widget(*data)
             box.pack_start(unit, True, True, 0)
         return box
 
