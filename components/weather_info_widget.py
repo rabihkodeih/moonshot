@@ -26,13 +26,13 @@ class WeatherInfoWidget(Gtk.VBox):
         self.init_components()
 
     @GObject.Signal
-    def update(self):
+    def refresh(self):
         data = get_weather_info_data()
-        self.widget_weather_icon.update(os.path.join(WEATHER_ICONS_PATH, '%s.svg' % data['weather_icon_code']))
-        self.widget_temperature.update('%s \u00B0C' % data['temperature'])        
-        self.widget_wind_speed.update('%s kph' % data['wind_speed'])
-        self.widget_humidity.update('%s %%' % data['humidity'])
-        self.widget_todays_date.update(data['todays_date'])
+        self.widget_weather_icon.refresh(os.path.join(WEATHER_ICONS_PATH, '%s.svg' % data['weather_icon_code']))
+        self.widget_temperature.refresh('%s \u00B0C' % data['temperature'])        
+        self.widget_wind_speed.refresh('%s kph' % data['wind_speed'])
+        self.widget_humidity.refresh('%s %%' % data['humidity'])
+        self.widget_todays_date.refresh(data['todays_date'])
 
     def text_widget(self, font_size='x-large', font_weight='light', margins=None):
         widget = Gtk.Box()
@@ -45,7 +45,7 @@ class WeatherInfoWidget(Gtk.VBox):
             label.set_margin_right(right)
         widget.add(label)
         markup = '<span font_size="%s" font_weight="%s">%s</span>'
-        widget.update = lambda text: label.set_markup(markup % (font_size, font_weight, text))
+        widget.refresh = lambda text: label.set_markup(markup % (font_size, font_weight, text))
         return widget
 
     def init_components(self):        
@@ -69,12 +69,12 @@ class WeatherInfoWidget(Gtk.VBox):
         self.pack_start(grid, False, True, 0)
         # todays date
         self.widget_todays_date = Gtk.Label()
-        def update_todays_date(today):
+        def refresh_todays_date(today):
             today_1, today_2 = today.split(',')
             markup = ('<span font_size="xx-large" font_weight="bold">%s</span>\n' % today_1 +
                       '<span font_size="xx-large" font_weight="light">%s</span>' % today_2)
             self.widget_todays_date.set_markup(markup)
-        self.widget_todays_date.update = update_todays_date
+        self.widget_todays_date.refresh = refresh_todays_date
         self.widget_todays_date.set_justify(Gtk.Justification.LEFT) 
         self.pack_start(self.widget_todays_date, False, True, 0)
             

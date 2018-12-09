@@ -55,7 +55,7 @@ class MainWindow(Gtk.Window):
         # refresh button
         icon = Gio.ThemedIcon(name="view-refresh-symbolic")
         refresh_btn = Gtk.Button(None, image=Gtk.Image.new_from_gicon(icon, Gtk.IconSize.BUTTON))
-        refresh_btn.connect("clicked", lambda _: MainWindow.singleton.emit('refresh_app_state'))
+        refresh_btn.connect("clicked", lambda _: MainWindow.singleton.emit('update_app_state'))
         hb.pack_start(refresh_btn)
         # temperature chart button
         icon = Gio.ThemedIcon(name="utilities-system-monitor-symbolic")
@@ -85,17 +85,16 @@ class MainWindow(Gtk.Window):
         return box
     
     @GObject.Signal
-    def refresh_app_state(self):
-        MainWindow.singleton.emit('update')
-        #TODO: perform an asyn app_state update operation where MainWindow.singleton.emit('update') is called at the end
+    def update_app_state(self):
+        MainWindow.singleton.emit('refresh')
+        #TODO: perform an asyn app_state update operation where MainWindow.singleton.emit('refresh') is called at the end
         
     @GObject.Signal    
-    def update(self):
-        pass
-        # FIXME: self.location_selector.update()
-        self.weather_info_widget.emit('update')
-        self.weather_day_widget.emit('update')
-        self.weather_week_widget.emit('update')
+    def refresh(self):
+        # FIXME: self.location_selector.refresh()
+        self.weather_info_widget.emit('refresh')
+        self.weather_day_widget.emit('refresh')
+        self.weather_week_widget.emit('refresh')
 
       
 def app_main():

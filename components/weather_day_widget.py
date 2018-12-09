@@ -22,10 +22,10 @@ class WeatherDayWidget(Gtk.Box):
         self.init_components()
 
     @GObject.Signal
-    def update(self):
+    def refresh(self):
         day_data = get_weather_day_data()
         for data, widget in zip(day_data, self.widgets_periods):
-            widget.update(*data)
+            widget.refresh(*data)
         
     def period_widget(self):
         # period
@@ -39,18 +39,18 @@ class WeatherDayWidget(Gtk.Box):
         temp_box = Gtk.Box()
         temp_label = Gtk.Label()
         temp_box.pack_start(temp_label, True, True, 0)
-        # update closure
-        def update(period, icon_code, temp):
+        # refresh closure
+        def refresh(period, icon_code, temp):
             markup = '<span font_size="%s" font_weight="light">%s</span>' % (f_size, period)
             period_label.set_markup(markup)
-            weather_image.update(os.path.join(WEATHER_ICONS_PATH, '%s.svg' % icon_code))
+            weather_image.refresh(os.path.join(WEATHER_ICONS_PATH, '%s.svg' % icon_code))
             markup = '<span font_family="arial narrow" font_size="large" font_weight="light">%s\u00B0</span>' % temp
             temp_label.set_markup(markup)
         # render period
         period.pack_start(period_label, False, True, 0)
         period.pack_start(weather_image, False, True, 0)
         period.pack_start(temp_box, False, True, 0)
-        period.update = update
+        period.refresh = refresh
         return period
 
     def init_components(self):

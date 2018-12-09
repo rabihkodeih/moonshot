@@ -51,18 +51,18 @@ def svg_image_widget(size=128, margins=None):
     '''
     This function returns a PyGobject image object given an svg
     input path. The returned object has an unpdate method having the
-    following the signature update(svg_path) which should be called
+    following the signature refresh(svg_path) which should be called
     in order to actually render the svg path.
     '''
     width = -1
     height = size
     preserve_aspect_ratio = True
     image = Gtk.Image()
-    def update_svg(svg_path):
+    def refresh_svg(svg_path):
         pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_scale(
             svg_path, width, height, preserve_aspect_ratio)
         image.set_from_pixbuf(pixbuf)
-    image.update = update_svg
+    image.refresh = refresh_svg
     if margins:
         top, right, bottom, left = margins
         image.set_margin_top(top)
