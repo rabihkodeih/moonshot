@@ -4,17 +4,34 @@ Created on Dec 8, 2018
 @author: rabihkodeih
 '''
 
-from datetime import datetime
 import random
+import time
+from datetime import datetime
+from utils import new_thread
+
+
+
+@new_thread
+def async_update(main_window):
+    time.sleep(0.25)  # simulates async call, where local state storage is actually updated
+    main_window.emit('refresh')
 
 
 def get_locations():
-    data = [('Paris', '0'),
-            ('London', '1'),
-            ('New York', '2'),
-            ('Beirut', '3'),
-            ('Helsinki', '4')]
+    data = [('Paris', 'coord_0'),
+            ('London', 'coord_1'),
+            ('New York', 'coord_2'),
+            ('Beirut', 'coord_3'),
+            ('Helsinki', 'coord_4')]
     return data
+
+
+def get_current_location():
+    return ('Helsinki', 'coord_4')
+
+
+def set_current_location(location_id):
+    pass
 
 
 def get_weather_info_data():
