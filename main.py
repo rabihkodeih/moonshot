@@ -11,10 +11,12 @@ from components.weather_day_widget import WeatherDayWidget
 from components.weather_week_widget import WeatherWeekWidget
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk, Gio
-import threading
+from gi.repository import GObject
 
 
 class MainWindow(Gtk.Window):
+    
+    singleton = None
     
     def __init__(self):
         Gtk.Window.__init__(self, title='CM')
@@ -36,13 +38,13 @@ class MainWindow(Gtk.Window):
         self.location_selector = self.create_location_selector()
         self.main_container.pack_start(self.location_selector, False, True, 10)
         # weather info widget
-        self.weather_info_widget = WeatherInfoWidget().component()
+        self.weather_info_widget = WeatherInfoWidget()
         self.main_container.pack_start(self.weather_info_widget, True, True, 10)
         # weather day widget
-        self.weather_day_widget = WeatherDayWidget().component()
+        self.weather_day_widget = WeatherDayWidget()
         self.main_container.pack_start(self.weather_day_widget, False, True, 50)
         # weathe week widget
-        self.weather_week_widget = WeatherWeekWidget().component()
+        self.weather_week_widget = WeatherWeekWidget()
         self.main_container.pack_start(self.weather_week_widget, False, True, 10)
 
     def create_header_bar(self):
@@ -53,6 +55,7 @@ class MainWindow(Gtk.Window):
         # refresh button
         icon = Gio.ThemedIcon(name="view-refresh-symbolic")
         refresh_btn = Gtk.Button(None, image=Gtk.Image.new_from_gicon(icon, Gtk.IconSize.BUTTON))
+        refresh_btn.connect("clicked", lambda _: MainWindow.singleton.emit('refresh_app_state'))
         hb.pack_start(refresh_btn)
         # temperature chart button
         icon = Gio.ThemedIcon(name="utilities-system-monitor-symbolic")
@@ -80,20 +83,27 @@ class MainWindow(Gtk.Window):
         button.connect("clicked", self.long_running_task)
         box.pack_start(button, True, True, 0)
         return box
+    
+    @GObject.Signal
+    def refresh_app_state(self):
+        MainWindow.singleton.emit('update')
+        #TODO: perform an asyn app_state update operation where MainWindow.singleton.emit('update') is called at the end
         
+    @GObject.Signal    
     def update(self):
+        pass
         # FIXME: self.location_selector.update()
-        self.weather_info_widget.update()
-        self.weather_day_widget.update()
-        self.weather_week_widget.update()
+        self.weather_info_widget.emit('update')
+        self.weather_day_widget.emit('update')
+        self.weather_week_widget.emit('update')
 
       
 def app_main():
     win = MainWindow()
+    MainWindow.singleton = win
     win.connect("destroy", Gtk.main_quit)
     win.connect("delete-event", Gtk.main_quit)
-    win.show_all() # FIXME: move this into a separate thread
-    win.update()
+    win.show_all()    
     
 
 if __name__ == '__main__':

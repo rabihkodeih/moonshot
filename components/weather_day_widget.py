@@ -11,13 +11,21 @@ from utils import svg_image_widget
 from settings import WEATHER_ICONS_PATH
 from app_state import get_weather_day_data
 gi.require_version('Gtk', '3.0')
-from gi.repository import Gtk
+from gi.repository import Gtk, GObject
 
 
-class WeatherDayWidget(object):
+class WeatherDayWidget(Gtk.Box):
 
     def __init__(self):
+        Gtk.Box.__init__(self)
         self.widgets_periods = []
+        self.init_components()
+
+    @GObject.Signal
+    def update(self):
+        day_data = get_weather_day_data()
+        for data, widget in zip(day_data, self.widgets_periods):
+            widget.update(*data)
         
     def period_widget(self):
         # period
@@ -45,19 +53,11 @@ class WeatherDayWidget(object):
         period.update = update
         return period
 
-    def component(self):
-        comp = Gtk.Box()
+    def init_components(self):
         for _ in range(8):
             period_widget = self.period_widget()
             self.widgets_periods.append(period_widget)
-            comp.pack_start(period_widget, True, True, 0)
-        comp.update = self.update
-        return comp
-    
-    def update(self):
-        day_data = get_weather_day_data()
-        for data, widget in zip(day_data, self.widgets_periods):
-            widget.update(*data)
+            self.pack_start(period_widget, True, True, 0)
     
 
 # end of file

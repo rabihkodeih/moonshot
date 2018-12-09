@@ -11,17 +11,28 @@ from utils import svg_image_widget
 from settings import WEATHER_ICONS_PATH
 from app_state import get_weather_info_data
 gi.require_version('Gtk', '3.0')
-from gi.repository import Gtk
+from gi.repository import Gtk, GObject
 
 
-class WeatherInfoWidget(object):
+class WeatherInfoWidget(Gtk.VBox):
         
     def __init__(self):
+        Gtk.VBox.__init__(self)
         self.widget_weather_icon = None
         self.widget_temperature = None
         self.widget_wind_speed = None
         self.widget_humidity = None
         self.widget_todays_date = None
+        self.init_components()
+
+    @GObject.Signal
+    def update(self):
+        data = get_weather_info_data()
+        self.widget_weather_icon.update(os.path.join(WEATHER_ICONS_PATH, '%s.svg' % data['weather_icon_code']))
+        self.widget_temperature.update('%s \u00B0C' % data['temperature'])        
+        self.widget_wind_speed.update('%s kph' % data['wind_speed'])
+        self.widget_humidity.update('%s %%' % data['humidity'])
+        self.widget_todays_date.update(data['todays_date'])
 
     def text_widget(self, font_size='x-large', font_weight='light', margins=None):
         widget = Gtk.Box()
@@ -37,8 +48,7 @@ class WeatherInfoWidget(object):
         widget.update = lambda text: label.set_markup(markup % (font_size, font_weight, text))
         return widget
 
-    def component(self):        
-        comp = Gtk.VBox()
+    def init_components(self):        
         # weather info
         grid = Gtk.Grid()
         self.widget_weather_icon = svg_image_widget(
@@ -56,7 +66,7 @@ class WeatherInfoWidget(object):
         grid.attach(weather_data_widget, 3, 3, 1, 1)
         grid.props.valign = Gtk.Align.CENTER
         grid.props.halign = Gtk.Align.CENTER
-        comp.pack_start(grid, False, True, 0)
+        self.pack_start(grid, False, True, 0)
         # todays date
         self.widget_todays_date = Gtk.Label()
         def update_todays_date(today):
@@ -66,17 +76,7 @@ class WeatherInfoWidget(object):
             self.widget_todays_date.set_markup(markup)
         self.widget_todays_date.update = update_todays_date
         self.widget_todays_date.set_justify(Gtk.Justification.LEFT) 
-        comp.pack_start(self.widget_todays_date, False, True, 0)
-        comp.update = self.update
-        return comp
-    
-    def update(self):
-        data = get_weather_info_data()
-        self.widget_weather_icon.update(os.path.join(WEATHER_ICONS_PATH, '%s.svg' % data['weather_icon_code']))
-        self.widget_temperature.update('%s \u00B0C' % data['temperature'])        
-        self.widget_wind_speed.update('%s kph' % data['wind_speed'])
-        self.widget_humidity.update('%s %%' % data['humidity'])
-        self.widget_todays_date.update(data['todays_date'])
-        
+        self.pack_start(self.widget_todays_date, False, True, 0)
+            
 
 # end of file

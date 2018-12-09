@@ -59,7 +59,8 @@ def svg_image_widget(size=128, margins=None):
     preserve_aspect_ratio = True
     image = Gtk.Image()
     def update_svg(svg_path):
-        pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_scale(svg_path, width, height, preserve_aspect_ratio)
+        pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_scale(
+            svg_path, width, height, preserve_aspect_ratio)
         image.set_from_pixbuf(pixbuf)
     image.update = update_svg
     if margins:

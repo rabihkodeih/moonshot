@@ -8,6 +8,15 @@ from datetime import datetime
 import random
 
 
+def get_locations():
+    data = [('Paris', '0'),
+            ('London', '1'),
+            ('New York', '2'),
+            ('Beirut', '3'),
+            ('Helsinki', '4')]
+    return data
+
+
 def get_weather_info_data():
     #TODO: get todays_date according to the timezone of the currently selected loation
     data = {'weather_icon_code': '02d',
