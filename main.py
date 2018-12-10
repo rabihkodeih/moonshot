@@ -8,6 +8,7 @@ Created on Dec 3, 2018
 from components.weather_info_widget import WeatherInfoWidget
 from components.weather_day_widget import WeatherDayWidget
 from components.weather_week_widget import WeatherWeekWidget
+from dialogs.settings_dialog import SettingsDialog
 
 import app_state
 import gi
@@ -53,35 +54,40 @@ class MainWindow(Gtk.Window):
         hb.set_show_close_button(True)
         hb.props.title = "Moonshot"
         # refresh button
-        icon = Gio.ThemedIcon(name="view-refresh-symbolic")
-        refresh_btn = Gtk.Button(None, image=Gtk.Image.new_from_gicon(icon, Gtk.IconSize.BUTTON))
+        refresh_btn = Gtk.Button.new_from_icon_name("view-refresh-symbolic", Gtk.IconSize.BUTTON)
         refresh_btn.connect("clicked", lambda _: self.emit('update_app_state'))
         hb.pack_start(refresh_btn)
         # temperature chart button
-        icon = Gio.ThemedIcon(name="utilities-system-monitor-symbolic")
-        tmpchart_btn = Gtk.Button(None, image=Gtk.Image.new_from_gicon(icon, Gtk.IconSize.BUTTON))
+        tmpchart_btn = Gtk.Button.new_from_icon_name("utilities-system-monitor-symbolic", Gtk.IconSize.BUTTON)
         hb.pack_start(tmpchart_btn)
         # settings button
-        icon = Gio.ThemedIcon(name="emblem-system-symbolic")
-        settings_btn = Gtk.Button(None, image = Gtk.Image.new_from_gicon(icon, Gtk.IconSize.BUTTON))
+        settings_btn = Gtk.Button.new_from_icon_name("emblem-system-symbolic", Gtk.IconSize.BUTTON)
         settings_btn.connect('clicked', self.settings_btn_clicked)
         hb.pack_start(settings_btn)
         return hb
 
     def settings_btn_clicked(self, widget):  # @UnusedVariable
-        self.location_selector.remove(self.location_selector.combo)
-        self.create_locations_combobox(self.location_selector)
-        self.location_selector.show_all()
+        settings_dialog = SettingsDialog(self)
+        response = settings_dialog.run()
+        if response == Gtk.ResponseType.OK:
+            settings_dialog.save_settings()
+            self.location_selector.remove(self.location_selector.combo)
+            self.create_locations_combobox(self.location_selector)
+            self.location_selector.show_all()
+        settings_dialog.destroy()
 
     def create_locations_combobox(self, container):
         combo = Gtk.ComboBoxText()
         container.combo = combo
         container.pack_start(combo, True, False, 0)
-        for name, coordinates in app_state.get_locations():
-            combo.append(coordinates, name)
-        _, active_id = app_state.get_current_location()
-        combo.set_active_id(active_id)
+        for location_id, name, _ in app_state.get_locations():
+            combo.append(location_id, name)
+        location_id = app_state.get_current_location_id()
+        location_ids = set(l[0] for l in app_state.get_locations())
+        if location_id not in location_ids:
+            location_id = location_ids.pop()
         combo.connect("changed", self.location_selector_combo_changed)
+        combo.set_active_id(location_id)
         return combo
 
     def create_location_selector(self):

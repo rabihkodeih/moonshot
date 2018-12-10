@@ -18,19 +18,20 @@ def async_update(main_window):
 
 
 def get_locations():
-    data = [('Paris', 'coord_0'),
-            ('London', 'coord_1'),
-            ('New York', 'coord_2'),
-            ('Beirut', 'coord_3'),
-            ('Helsinki', 'coord_4')]
+    data = [('10', 'Paris', 'coord_0'),
+            ('11', 'London', 'coord_1'),
+            ('12', 'New York', 'coord_2'),
+            ('13', 'Beirut', 'coord_3'),
+            ('14', 'Helsinki', 'coord_4')]
     return data
 
 
-def get_current_location():
-    return ('Helsinki', 'coord_4')
+def get_current_location_id():
+    return '14'
 
 
 def set_current_location(location_id):
+    # TODO: implement with actual DB access
     pass
 
 
