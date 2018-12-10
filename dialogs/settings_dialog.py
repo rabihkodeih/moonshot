@@ -7,7 +7,7 @@ Created on Dec 9, 2018
 import app_state
 import gi
 gi.require_version('Gtk', '3.0')
-from gi.repository import Gtk, GdkPixbuf, Gio
+from gi.repository import Gtk
 
 
 class SettingsDialog(Gtk.Dialog):
@@ -22,6 +22,7 @@ class SettingsDialog(Gtk.Dialog):
         self.set_border_width(10)
         self.props.resizable = False
         self.init_components()
+    
     
     def init_components(self):
         container = self.get_content_area()
@@ -42,6 +43,7 @@ class SettingsDialog(Gtk.Dialog):
             renderer = Gtk.CellRendererText()
             if i > 0:
                 renderer.props.editable = True
+                renderer.connect("edited", self.text_edited_handler(i))
             column = Gtk.TreeViewColumn(column_title, renderer, text=i)
             self.treeview.append_column(column)
         container.pack_start(self.treeview, True, True, 10)
@@ -58,19 +60,26 @@ class SettingsDialog(Gtk.Dialog):
         
         self.show_all()
     
-    def add_button_clicked(self, _):
-        #TODO: on add click: just add a new row to the view with selection and default values
-        print('new row added')
-        pass
+    def text_edited_handler(self, column_index):
+        def text_edited(widget, path, text):
+            self.store[path][column_index] = text
+        return text_edited
     
-    def delete_button_clicked(self, _):
-        #TODO: on add click: just add a new row to the view with selection and default values
-        print('selected row deleted')
-        pass
+    def add_button_clicked(self, widget):
+        new_loation_model = ('-1', '__name__', '__coordinates__') 
+        self.store.append(new_loation_model)
+    
+    def delete_button_clicked(self, widget):
+        selection = self.treeview.get_selection()
+        model, paths = selection.get_selected_rows()
+        for path in paths:
+            model.remove(model.get_iter(path))
     
     def save_settings(self):
         #TODO: save new location settings to persistent storage
-        pass
+        for row in self.store:
+            location_id, name, coordinates = list(row)
+            print(location_id, name, coordinates)
         
 
 # end of file
