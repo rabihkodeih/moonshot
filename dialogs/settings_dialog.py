@@ -6,6 +6,7 @@ Created on Dec 9, 2018
 
 import app_state
 import gi
+from gi.overrides.Gtk import ScrolledWindow
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk
 
@@ -18,7 +19,7 @@ class SettingsDialog(Gtk.Dialog):
              Gtk.ResponseType.CANCEL,
              Gtk.STOCK_SAVE, 
              Gtk.ResponseType.OK))
-        self.set_default_size(300, 400)
+        self.set_default_size(320, 400)
         self.set_border_width(10)
         self.props.resizable = False
         self.init_components()
@@ -34,19 +35,22 @@ class SettingsDialog(Gtk.Dialog):
         container.pack_start(help_label, False, False, 0)
         
         # tree view
+        self.treeview_container = Gtk.ScrolledWindow()
+        self.treeview_container.set_vexpand(True)
         locations = app_state.get_locations()
-        self.store = Gtk.ListStore(str, str, str)
+        self.store = Gtk.ListStore(str, str, str, str)
         for loc in locations:
             self.store.append(loc)
         self.treeview = Gtk.TreeView(model=self.store)
-        for i, column_title in enumerate(["Id", "Location Name", "Coordinates"]):
+        for i, column_title in enumerate(["Id", "Location Name", "Latitude", "Longitude"]):
             renderer = Gtk.CellRendererText()
             if i > 0:
                 renderer.props.editable = True
                 renderer.connect("edited", self.text_edited_handler(i))
             column = Gtk.TreeViewColumn(column_title, renderer, text=i)
             self.treeview.append_column(column)
-        container.pack_start(self.treeview, True, True, 10)
+        self.treeview_container.add(self.treeview)       
+        container.pack_start(self.treeview_container, True, True, 10)
         
         # action bar
         action_bar = Gtk.ActionBar()
@@ -66,7 +70,7 @@ class SettingsDialog(Gtk.Dialog):
         return text_edited
     
     def add_button_clicked(self, widget):
-        new_loation_model = ('-1', '__name__', '__coordinates__') 
+        new_loation_model = ('-1', '__name__', '__lat__', '__long__') 
         self.store.append(new_loation_model)
     
     def delete_button_clicked(self, widget):
@@ -78,8 +82,8 @@ class SettingsDialog(Gtk.Dialog):
     def save_settings(self):
         #TODO: save new location settings to persistent storage
         for row in self.store:
-            location_id, name, coordinates = list(row)
-            print(location_id, name, coordinates)
+            location_id, name, latitude, longitude = list(row)
+            print(location_id, name, latitude, longitude)
         
 
 # end of file

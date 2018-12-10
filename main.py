@@ -80,7 +80,7 @@ class MainWindow(Gtk.Window):
         combo = Gtk.ComboBoxText()
         container.combo = combo
         container.pack_start(combo, True, False, 0)
-        for location_id, name, _ in app_state.get_locations():
+        for location_id, name, _, _ in app_state.get_locations():
             combo.append(location_id, name)
         location_id = app_state.get_current_location_id()
         location_ids = set(l[0] for l in app_state.get_locations())

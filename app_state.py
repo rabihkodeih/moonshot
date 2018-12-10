@@ -18,11 +18,11 @@ def async_update(main_window):
 
 
 def get_locations():
-    data = [('10', 'Paris', 'coord_0'),
-            ('11', 'London', 'coord_1'),
-            ('12', 'New York', 'coord_2'),
-            ('13', 'Beirut', 'coord_3'),
-            ('14', 'Helsinki', 'coord_4')]
+    data = [('10', 'Paris' , 'latitude_0', 'longitude_0'),
+            ('11', 'London' , 'latitude_1', 'longitude_1'),
+            ('12', 'New York', 'latitude_2', 'longitude_2'),
+            ('13', 'Beirut', 'latitude_3', 'longitude_3'),
+            ('14', 'Helsinki', 'latitude_4', 'longitude_4')]
     return data
 
 
