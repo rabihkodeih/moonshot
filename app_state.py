@@ -6,6 +6,7 @@ Created on Dec 8, 2018
 
 import random
 import time
+import storage
 from datetime import datetime
 from utils import new_thread
 
@@ -18,19 +19,43 @@ def async_update(main_window):
 
 
 def get_locations():
-    data = [('10', 'Paris' , 'latitude_0', 'longitude_0'),
-            ('11', 'London' , 'latitude_1', 'longitude_1'),
-            ('12', 'New York', 'latitude_2', 'longitude_2'),
-            ('13', 'Beirut', 'latitude_3', 'longitude_3'),
-            ('14', 'Helsinki', 'latitude_4', 'longitude_4')]
-    return data
+    query = 'SELECT id, name, latitude, longitude FROM locations;'
+    locations = ([str(f) for f in r] for r in storage.execute_query(query))
+    return locations
+
+
+def save_locations(locations, deleted_locations):
+    persisted = {loc[0]: loc for loc in get_locations()}
+    updated = []
+    inserted = []
+    if deleted_locations:
+        deleted_ids = ', '.join(l[0] for l in deleted_locations)
+        query = 'DELETE FROM locations WHERE id in (%s)' % deleted_ids
+        storage.execute_query(query)
+    for loc in locations:
+        loc = list(loc)
+        loc_id = loc[0]
+        if loc_id == '-1':
+            inserted.append(loc)
+        elif loc != persisted[loc_id]:
+            updated.append(loc)
+    if inserted:
+        values = ', '.join('(%s)' % ', '.join('"%s"' % f for f in loc[1:]) for loc in inserted)
+        query = 'INSERT INTO locations (name, latitude, longitude) VALUES %s' % values
+        storage.execute_query(query)
+    if updated:
+        for loc in updated:
+            loc_id, name, latitude, longitude = loc
+            query = 'UPDATE locations SET name="%s", latitude="%s", longitude="%s" WHERE ID=%s'
+            query = query % (name, latitude, longitude, loc_id)
+            storage.execute_query(query)            
 
 
 def get_current_location_id():
-    return '14'
+    return '5'
 
 
-def set_current_location(location_id):
+def set_current_location_id(location_id):
     # TODO: implement with actual DB access
     pass
 
@@ -39,7 +64,7 @@ def get_weather_info_data():
     #TODO: get todays_date according to the timezone of the currently selected loation
     data = {'weather_icon_code': '02d',
             'temperature': 23,
-            'wind_speed': random.randrange(5, 20),# 11,
+            'wind_speed': random.randrange(5, 20),
             'humidity': 76,
             'todays_date': datetime.now().strftime('%A,%B %d %Y')}
     return data

@@ -4,9 +4,13 @@ Created on Dec 8, 2018
 @author: rabihkodeih
 '''
 
+import os
+import sqlite3
 import random
 import threading
 import gi
+from settings import DATABASE_NAME
+from settings import BASE_DIR
 from functools import wraps
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk, Gdk, GdkPixbuf
@@ -46,6 +50,25 @@ def new_thread(func):
         return thread
     return wrapper
 
+
+def db_transaction(func):
+    '''
+    This decorator abstracts away sqlite3 database connection
+    and transaction processing. The resultant function will
+    be passed a cursor object that can be used in various db
+    operations.
+    '''
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        sql_file = os.path.join(BASE_DIR, '%s.sqlite' % DATABASE_NAME)
+        conn = sqlite3.connect(sql_file)
+        cursor = conn.cursor()
+        result = func(cursor, *args, **kwargs)
+        conn.commit()
+        conn.close()
+        return result
+    return wrapper
+    
 
 def svg_image_widget(size=128, margins=None):
     '''

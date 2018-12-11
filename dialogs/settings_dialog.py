@@ -22,6 +22,7 @@ class SettingsDialog(Gtk.Dialog):
         self.set_default_size(320, 400)
         self.set_border_width(10)
         self.props.resizable = False
+        self.deleted_locations = []
         self.init_components()
     
     
@@ -76,14 +77,13 @@ class SettingsDialog(Gtk.Dialog):
     def delete_button_clicked(self, widget):
         selection = self.treeview.get_selection()
         model, paths = selection.get_selected_rows()
+        self.deleted_locations.append(list(self.store[paths[0]]))
         for path in paths:
             model.remove(model.get_iter(path))
     
     def save_settings(self):
-        #TODO: save new location settings to persistent storage
-        for row in self.store:
-            location_id, name, latitude, longitude = list(row)
-            print(location_id, name, latitude, longitude)
+        locations = list(self.store)
+        app_state.save_locations(locations, self.deleted_locations)
         
 
 # end of file

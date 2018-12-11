@@ -12,8 +12,9 @@ from dialogs.settings_dialog import SettingsDialog
 
 import app_state
 import gi
+from storage import init_database
 gi.require_version('Gtk', '3.0')
-from gi.repository import Gtk, Gio, GObject
+from gi.repository import Gtk, GObject
 
 
 class MainWindow(Gtk.Window):
@@ -96,9 +97,8 @@ class MainWindow(Gtk.Window):
         return box
 
     def location_selector_combo_changed(self, combo):
-        print('combo changed')
         location_id = combo.get_active_id()
-        app_state.set_current_location(location_id)
+        app_state.set_current_location_id(location_id)
         self.emit('update_app_state')
 
     @GObject.Signal
@@ -114,7 +114,6 @@ class MainWindow(Gtk.Window):
       
 def app_main():
     win = MainWindow()
-    win.emit('refresh')
     win.connect("destroy", Gtk.main_quit)
     win.connect("delete-event", Gtk.main_quit)
     win.show_all()
@@ -124,11 +123,10 @@ def app_main():
 if __name__ == '__main__':
     print('Starting...\n')
     
+    init_database()
     app_main()
     Gtk.main()
 
-    print('\nDone.')
-    
 
 # end of file
 
