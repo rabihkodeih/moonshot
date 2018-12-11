@@ -5,18 +5,17 @@ Created on Dec 8, 2018
 '''
 
 import storage
-from utils import new_thread, fetch_weather_info_data
+from utils import new_thread
+from utils import fetch_weather_day_data
+from utils import fetch_weather_week_data
+from utils import fetch_weather_info_data
 from storage import execute_query
 
 
-
 def async_update(main_window):
-    print()
-    print('=' * 70)
-    print('async update')
-    print('=' * 70)
-    print()
     async_update_weather_info_data(main_window)
+    async_update_weather_day_data(main_window)
+    # async_update_weather_week_data(main_window)
     
     
 @new_thread
@@ -25,38 +24,32 @@ def async_update_weather_info_data(main_window):
     if location:
         latitude, longitude = location
         data = fetch_weather_info_data(latitude, longitude)    
-        first_of = lambda x: x[0] if x else {}
-        weather_info_data = {'weather_icon_code': first_of(data.get('weather', {})).get('icon', '02d'),
+        weather_info_data = {'weather_icon_code': data.get('weather', [{}])[0].get('icon', '02d'),
                              'temperature': data.get('main', {}).get('temp', '_'),
                              'wind_speed': data.get('wind', {}).get('speed', '_'),
                              'humidity': data.get('main', {}).get('humidity', '_')}
         storage.set_json_value('WEATHER_INFO_DATA', weather_info_data)
         main_window.emit('refresh')
-    
-#     # TODO: implement actual API call
-#     weather_day_data = [('3 AM', '02d', random.randrange(21, 33)),
-#                         ('6 AM', '09d', random.randrange(21, 33)),
-#                         ('9 AM', '13d', random.randrange(21, 33)),
-#                         ('NOON', '04d', random.randrange(21, 33)),
-#                         ('3 PM', '50d', random.randrange(21, 33)),
-#                         ('6 PM', '02d', random.randrange(21, 33)),
-#                         ('9 PM', '02d', random.randrange(21, 33)),
-#                         ('MIDN', '01d', random.randrange(21, 33))]
-#     storage.set_json_value('WEATHER_DAY_DATA', weather_day_data)
-#     main_window.emit('refresh')
-    
-#     # TODO: implement actual API call
-#     weather_week_data = [('MON', '01d', random.randrange(27, 33), random.randrange(21, 27)),
-#                          ('TUE', '02d', random.randrange(27, 33), random.randrange(21, 27)),
-#                          ('WED', '09d', random.randrange(27, 33), random.randrange(21, 27)),
-#                          ('THU', '13d', random.randrange(27, 33), random.randrange(21, 27)),
-#                          ('FRI', '04d', random.randrange(27, 33), random.randrange(21, 27)),
-#                          ('SAT', '50d', random.randrange(27, 33), random.randrange(21, 27)),
-#                          ('SUN', '02d', random.randrange(27, 33), random.randrange(21, 27))]
-#     storage.set_json_value('WEATHER_WEEK_DATA', weather_week_data)
-#     main_window.emit('refresh')
 
-    # TODO: combine all the calls in three threaded functions 
+
+@new_thread
+def async_update_weather_day_data(main_window):
+    location = get_current_location()
+    if location:
+        latitude, longitude = location
+        weather_day_data = fetch_weather_day_data(latitude, longitude)
+        storage.set_json_value('WEATHER_DAY_DATA', weather_day_data)
+        main_window.emit('refresh')
+
+
+@new_thread
+def async_update_weather_week_data(main_window):
+    location = get_current_location()
+    if location:
+        latitude, longitude = location
+        weather_week_data = fetch_weather_week_data(latitude, longitude)
+        storage.set_json_value('WEATHER_WEEK_DATA', weather_week_data)
+        main_window.emit('refresh')
     
 
 def get_locations():
@@ -124,27 +117,27 @@ def get_weather_info_data():
 def get_weather_day_data():
     weather_day_data = storage.get_json_value('WEATHER_DAY_DATA')
     if weather_day_data is None:
-        weather_day_data = [('3 AM', '02d', '_'),
-                            ('6 AM', '02d', '_'),
-                            ('9 AM', '02d', '_'),
-                            ('NOON', '02d', '_'),
-                            ('3 PM', '02d', '_'),
-                            ('6 PM', '02d', '_'),
-                            ('9 PM', '02d', '_'),
-                            ('MIDN', '02d', '_')]
+        weather_day_data = [('____', '02d', '_'),
+                            ('____', '02d', '_'),
+                            ('____', '02d', '_'),
+                            ('____', '02d', '_'),
+                            ('____', '02d', '_'),
+                            ('____', '02d', '_'),
+                            ('____', '02d', '_'),
+                            ('____', '02d', '_')]
     return weather_day_data
 
 
 def get_weather_week_data():
     weather_week_data = storage.get_json_value('WEATHER_WEEK_DATA')
     if weather_week_data is None:
-        weather_week_data = [('___', '02d', '_', '_'),
-                             ('___', '02d', '_', '_'),
-                             ('___', '02d', '_', '_'),
-                             ('___', '02d', '_', '_'),
-                             ('___', '02d', '_', '_'),
-                             ('___', '02d', '_', '_'),
-                             ('___', '02d', '_', '_')]
+        weather_week_data = [('MON', '02d', '_', '_'),
+                             ('TUE', '02d', '_', '_'),
+                             ('WED', '02d', '_', '_'),
+                             ('THU', '02d', '_', '_'),
+                             ('FRI', '02d', '_', '_'),
+                             ('SAT', '02d', '_', '_'),
+                             ('SUN', '02d', '_', '_')]
     return weather_week_data
 
 

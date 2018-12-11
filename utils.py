@@ -9,7 +9,10 @@ import sqlite3
 import random
 import threading
 import requests
-from settings import DATABASE_NAME, OPENWEATHERMAPAPI_KEY, OPENWEATHERMAP_URL
+from datetime import datetime
+from settings import DATABASE_NAME
+from settings import OPENWEATHERMAPAPI_KEY
+from settings import OPENWEATHERMAP_URL
 from settings import BASE_DIR
 from functools import wraps
 
@@ -28,13 +31,79 @@ def fetch_weather_info_data(latitude, longitude):
     location_query = 'lat=%s&lon=%s' % (latitude, longitude)
     units_query = 'units=metric'
     auth_query = 'APPID=%s' % OPENWEATHERMAPAPI_KEY
-    url = "%s?%s&%s&%s" % (OPENWEATHERMAP_URL, location_query, units_query, auth_query)
+    url = "%s/weather?%s&%s&%s" % (OPENWEATHERMAP_URL, location_query, units_query, auth_query)
     r = requests.get(url)
     if r.status_code == 200:
         data = r.json()
     else:
         data = {}
     return data
+
+
+def fetch_weather_day_data(latitude, longitude):
+    '''
+    This function gets the weather day forecast data from the online
+    weather ervice using the following api endpoint defined in
+    constants.py. The inputs are lat-long based coordinates.
+    '''
+    location_query = 'lat=%s&lon=%s' % (latitude, longitude)
+    units_query = 'units=metric'
+    auth_query = 'APPID=%s' % OPENWEATHERMAPAPI_KEY
+    url = "%s/forecast?%s&%s&%s" % (OPENWEATHERMAP_URL, location_query, units_query, auth_query)
+    r = requests.get(url)
+    if r.status_code == 200:
+        data = r.json()
+    else:
+        data = {}
+    forecasts = data.get('list', [])
+    forecasts += [{}]*8
+    weather_day_data = []    
+    for f in forecasts[:8]:
+        forecast_time = f.get('dt_txt')
+        if forecast_time:
+            tmp = datetime.strptime(forecast_time, '%Y-%m-%d %H:%M:%S')
+            forecast_time = datetime.strftime(tmp, '%-I %p')
+            forecast_time = forecast_time.replace('12 PM', 'NOON').replace('12 AM', 'MIDN')
+        else:
+            forecast_time = '____'
+        icon_code = f.get('weather', [{}])[0].get('icon', '02d')
+        temperature = f.get('main', {}).get('temp', '_')
+        weather_day_data.append((forecast_time, icon_code, temperature))
+    return weather_day_data
+
+
+def fetch_weather_week_data(latitude, longitude):
+    '''
+    This function gets the weather week forecast data from the online
+    weather ervice using the following api endpoint defined in
+    constants.py. The inputs are lat-long based coordinates.
+    '''
+    location_query = 'lat=%s&lon=%s' % (latitude, longitude)
+    count_query = 'cnt=8'
+    units_query = 'units=metric'
+    auth_query = 'APPID=%s' % OPENWEATHERMAPAPI_KEY
+    url = "%s/forecast/daily?%s&%s&%s&%s" % (OPENWEATHERMAP_URL, location_query, 
+                                             count_query, units_query, auth_query)
+    r = requests.get(url)
+    if r.status_code == 200:
+        data = r.json()
+    else:
+        data = {}        
+    forecasts = data.get('list', [])
+    forecasts += [{}]*7
+    weather_week_data = []
+    for f in forecasts[:7]:
+        dt = f.get("dt")
+        if dt:
+            tmp = datetime.fromtimestamp(int(dt))
+            week_day = datetime.strftime(tmp, '%a').upper()
+        else:
+            week_day = '___'
+        icon_code = f.get('weather', [{}])[0].get('icon', '02d')
+        temp_min = f.get('temp', {}).get('min', '_')
+        temp_max = f.get('temp', {}).get('max', '_')
+        weather_week_data.append((week_day, icon_code, temp_min, temp_max))
+    return weather_week_data
 
 
 def debug_background(show):

@@ -13,7 +13,7 @@ from dialogs.settings_dialog import SettingsDialog
 import app_state
 import gi
 from storage import init_database, execute_query
-from settings import OPENWEATHERMAPAPI_KEY, OPENWEATHERMAP_URL
+from settings import OPENWEATHERMAPAPI_KEY, OPENWEATHERMAP_URL, DATABASE_NAME
 from utils import fetch_weather_info_data
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk, GObject
@@ -88,7 +88,7 @@ class MainWindow(Gtk.Window):
         location_id = app_state.get_current_location_id()
         location_ids = set(l[0] for l in app_state.get_locations())
         if location_id not in location_ids:
-            location_id = location_ids.pop()
+            location_id = location_ids.pop() if location_ids else '-1'
             app_state.set_current_location_id(location_id)
         combo.set_active_id(location_id)
         combo.connect("changed", self.location_selector_combo_changed)
@@ -101,7 +101,6 @@ class MainWindow(Gtk.Window):
 
     def location_selector_combo_changed(self, combo):
         location_id = combo.get_active_id()
-        print('setting loc id:', location_id)
         app_state.set_current_location_id(location_id)
         self.emit('update_app_state')
 
@@ -122,8 +121,6 @@ def app_main():
     win.connect("delete-event", Gtk.main_quit)
     win.show_all()
     win.emit("refresh")
-    # TODO: enable at the end of testing
-    # win.emit('update_app_state')
     
 
 if __name__ == '__main__':
@@ -132,45 +129,10 @@ if __name__ == '__main__':
     init_database()
     app_main()
     Gtk.main()
-
-#     import storage
-#     current_location_id = storage.get_text_value('CURRENT_LOCATION_ID')
-#     if current_location_id:
-#         query = 'SELECT latitude, longitude FROM locations WHERE id=%s' % current_location_id
-#         result = execute_query(query)
-#     else:
-#         result = None
-#     location = result[0] if result else None
-#     
-#     print(location)
-#     
-#     if location:
-#         latitude, longitude = result[0]
-#         print(latitude)
-#         print(longitude)
-    
     
     print('\nDone.')
 
 # end of file
-
-
-
-# SPECS:
-# Locations (1+)
-# Display weather for at least 24 hours ahead
-# refresh/update for weather data
-# keep historical records
-# use history to provide temperature chart
-
-# API:
-# api.openweathermap.org/data/2.5/weather?q={city name}
-# api.openweathermap.org/data/2.5/weather?q={city name},{country code}
-# api.openweathermap.org/data/2.5/weather?id={city_id}
-# api.openweathermap.org/data/2.5/weather?lat={lat}&lon={lon}
-# api.openweathermap.org/data/2.5/weather?zip={zip code},{country code}
-# JSON response (Only really measured or calculated data is displayed in API response):
-# weather condition codes: https://openweathermap.org/weather-conditions
 
 
 
