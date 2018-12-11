@@ -31,7 +31,7 @@ class WeatherInfoWidget(Gtk.VBox):
         data = get_weather_info_data()
         self.widget_weather_icon.refresh(os.path.join(WEATHER_ICONS_PATH, '%s.svg' % data['weather_icon_code']))
         self.widget_temperature.refresh('%s \u00B0C' % data['temperature'])        
-        self.widget_wind_speed.refresh('%s kph' % data['wind_speed'])
+        self.widget_wind_speed.refresh('%s mps' % data['wind_speed'])
         self.widget_humidity.refresh('%s %%' % data['humidity'])
         self.widget_todays_date.refresh(datetime.now().strftime('%A,%B %d %Y'))
 

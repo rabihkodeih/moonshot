@@ -8,13 +8,33 @@ import os
 import sqlite3
 import random
 import threading
-import gi
-from settings import DATABASE_NAME
+import requests
+from settings import DATABASE_NAME, OPENWEATHERMAPAPI_KEY, OPENWEATHERMAP_URL
 from settings import BASE_DIR
 from functools import wraps
+
+import gi
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk, Gdk, GdkPixbuf
 
+
+
+def fetch_weather_info_data(latitude, longitude):
+    '''
+    This function gets the weather info data from the online
+    weather ervice using the following api endpoint defined in
+    constants.py. The inputs are lat-long based coordinates.
+    '''
+    location_query = 'lat=%s&lon=%s' % (latitude, longitude)
+    units_query = 'units=metric'
+    auth_query = 'APPID=%s' % OPENWEATHERMAPAPI_KEY
+    url = "%s?%s&%s&%s" % (OPENWEATHERMAP_URL, location_query, units_query, auth_query)
+    r = requests.get(url)
+    if r.status_code == 200:
+        data = r.json()
+    else:
+        data = {}
+    return data
 
 
 def debug_background(show):

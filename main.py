@@ -12,7 +12,9 @@ from dialogs.settings_dialog import SettingsDialog
 
 import app_state
 import gi
-from storage import init_database
+from storage import init_database, execute_query
+from settings import OPENWEATHERMAPAPI_KEY, OPENWEATHERMAP_URL
+from utils import fetch_weather_info_data
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk, GObject
 
@@ -131,6 +133,23 @@ if __name__ == '__main__':
     app_main()
     Gtk.main()
 
+#     import storage
+#     current_location_id = storage.get_text_value('CURRENT_LOCATION_ID')
+#     if current_location_id:
+#         query = 'SELECT latitude, longitude FROM locations WHERE id=%s' % current_location_id
+#         result = execute_query(query)
+#     else:
+#         result = None
+#     location = result[0] if result else None
+#     
+#     print(location)
+#     
+#     if location:
+#         latitude, longitude = result[0]
+#         print(latitude)
+#         print(longitude)
+    
+    
     print('\nDone.')
 
 # end of file
@@ -155,9 +174,10 @@ if __name__ == '__main__':
 
 
 
-#TODO: https://stackoverflow.com/questions/19452797/draw-a-svg-image-in-gtk3-from-svg-source-in-python
 #TODO: apply PEP8 formating
 #TODO: add documentation where it counts
+#TODO: add some test cases (notably in store)
+#TODO: add a comprehensive readme github file with screenshots, installtion instructions and everything
 
 
 
