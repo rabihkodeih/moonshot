@@ -52,12 +52,11 @@ def save_locations(locations, deleted_locations):
 
 
 def get_current_location_id():
-    return '5'
+    return storage.get_value('CURRENT_LOCATION_ID')
 
 
 def set_current_location_id(location_id):
-    # TODO: implement with actual DB access
-    pass
+    storage.set_value('CURRENT_LOCATION_ID', str(location_id))
 
 
 def get_weather_info_data():

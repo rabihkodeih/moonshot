@@ -87,8 +87,9 @@ class MainWindow(Gtk.Window):
         location_ids = set(l[0] for l in app_state.get_locations())
         if location_id not in location_ids:
             location_id = location_ids.pop()
-        combo.connect("changed", self.location_selector_combo_changed)
+            app_state.set_current_location_id(location_id)
         combo.set_active_id(location_id)
+        combo.connect("changed", self.location_selector_combo_changed)
         return combo
 
     def create_location_selector(self):
@@ -98,6 +99,7 @@ class MainWindow(Gtk.Window):
 
     def location_selector_combo_changed(self, combo):
         location_id = combo.get_active_id()
+        print('setting loc id:', location_id)
         app_state.set_current_location_id(location_id)
         self.emit('update_app_state')
 
@@ -117,12 +119,12 @@ def app_main():
     win.connect("destroy", Gtk.main_quit)
     win.connect("delete-event", Gtk.main_quit)
     win.show_all()
-
+    win.emit("refresh")
     
 
 if __name__ == '__main__':
     print('Starting...\n')
-    
+        
     init_database()
     app_main()
     Gtk.main()

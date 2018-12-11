@@ -6,7 +6,6 @@ Created on Dec 9, 2018
 
 import app_state
 import gi
-from gi.overrides.Gtk import ScrolledWindow
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk
 
@@ -45,10 +44,16 @@ class SettingsDialog(Gtk.Dialog):
         self.treeview = Gtk.TreeView(model=self.store)
         for i, column_title in enumerate(["Id", "Location Name", "Latitude", "Longitude"]):
             renderer = Gtk.CellRendererText()
-            if i > 0:
+            if i == 0:
+                column = Gtk.TreeViewColumn(column_title, renderer, text=i)
+                column.props.visible = False
+            else:
                 renderer.props.editable = True
                 renderer.connect("edited", self.text_edited_handler(i))
-            column = Gtk.TreeViewColumn(column_title, renderer, text=i)
+                column = Gtk.TreeViewColumn(column_title, renderer, text=i)
+                column.set_min_width(50)
+                column.set_sizing(Gtk.TreeViewColumnSizing.AUTOSIZE)
+                column.set_resizable(True)
             self.treeview.append_column(column)
         self.treeview_container.add(self.treeview)       
         container.pack_start(self.treeview_container, True, True, 10)
@@ -71,7 +76,7 @@ class SettingsDialog(Gtk.Dialog):
         return text_edited
     
     def add_button_clicked(self, widget):
-        new_loation_model = ('-1', '__name__', '__lat__', '__long__') 
+        new_loation_model = ('-1', '_name_', '_lat_', '_long_') 
         self.store.append(new_loation_model)
     
     def delete_button_clicked(self, widget):

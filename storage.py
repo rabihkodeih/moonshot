@@ -25,6 +25,15 @@ def init_database(cursor):
         );
     '''
     cursor.execute(query)
+    
+    # create keyvalues table
+    query = '''
+        CREATE TABLE IF NOT EXISTS keyvalues (
+            key TEXT PRIMARY KEY,
+            value TEXT NOT NULL
+        );
+    '''
+    cursor.execute(query)
 
 
 @db_transaction
@@ -38,5 +47,22 @@ def execute_scalar(cursor, query):
     cursor.execute(query)
     return cursor.fetchall()[0][0]
 
+
+@db_transaction
+def get_value(cursor, key):
+    query = 'SELECT value FROM keyvalues WHERE key="%s";' % key 
+    cursor.execute(query)
+    results = cursor.fetchall()
+    value = results[0][0] if results else None
+    return value
+    
+    
+@db_transaction
+def set_value(cursor, key, value):
+    query = 'DELETE FROM keyvalues WHERE key="%s";' % key
+    cursor.execute(query)
+    query = 'INSERT INTO keyvalues (key, value) values ("%s", "%s");' % (key, value)
+    cursor.execute(query)
+    
 
 # end of file
