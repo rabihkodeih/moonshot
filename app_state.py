@@ -14,8 +14,6 @@ from gi.repository import GLib
 
 
 def async_update(main_window):
-    print()
-    print('async update')
     async_update_weather_info_data(main_window)
     async_update_weather_day_data(main_window)
     async_update_weather_week_data(main_window)

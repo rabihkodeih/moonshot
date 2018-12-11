@@ -15,9 +15,6 @@ from settings import OPENWEATHERMAPAPI_KEY
 from settings import OPENWEATHERMAP_URL
 from settings import BASE_DIR
 from functools import wraps
-
-import gi
-gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk, Gdk, GdkPixbuf
 
 

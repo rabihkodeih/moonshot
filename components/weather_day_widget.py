@@ -6,12 +6,10 @@ Created on Dec 8, 2018
 
 
 import os
-import gi
 import threading
 from utils import svg_image_widget
 from settings import WEATHER_ICONS_PATH
 from app_state import get_weather_day_data
-gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk
 
 
@@ -23,7 +21,7 @@ class WeatherDayWidget(Gtk.Box):
         self.init_components()
 
     def refresh(self):
-        print('weather_day_widget:', threading.get_ident())
+        print('weather_day_widget / thread id:', threading.get_ident())
         day_data = get_weather_day_data()
         for data, widget in zip(day_data, self.widgets_periods):
             widget.refresh(*data)
