@@ -5,6 +5,8 @@ Created on Dec 10, 2018
 '''
 
 import os
+import base64
+import json
 from utils import db_transaction
 from settings import BASE_DIR, DATABASE_NAME
 
@@ -49,20 +51,35 @@ def execute_scalar(cursor, query):
 
 
 @db_transaction
-def get_value(cursor, key):
+def get_text_value(cursor, key):
     query = 'SELECT value FROM keyvalues WHERE key="%s";' % key 
     cursor.execute(query)
     results = cursor.fetchall()
     value = results[0][0] if results else None
     return value
     
+
+def get_json_value(key):
+    value = get_text_value(key)
+    if value:
+        recovered = base64.b64decode(value.encode()[2:-1])
+        result = json.loads(recovered)
+    else:
+        result = None
+    return result
+    
     
 @db_transaction
-def set_value(cursor, key, value):
+def set_text_value(cursor, key, value):
     query = 'DELETE FROM keyvalues WHERE key="%s";' % key
     cursor.execute(query)
     query = 'INSERT INTO keyvalues (key, value) values ("%s", "%s");' % (key, value)
     cursor.execute(query)
+    
+
+def set_json_value(key, value):
+    encoded = base64.b64encode(json.dumps(value).encode('utf-8'))
+    set_text_value(key, encoded)
     
 
 # end of file

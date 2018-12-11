@@ -67,7 +67,7 @@ class MainWindow(Gtk.Window):
         hb.pack_start(settings_btn)
         return hb
 
-    def settings_btn_clicked(self, widget):  # @UnusedVariable
+    def settings_btn_clicked(self, widget):
         settings_dialog = SettingsDialog(self)
         response = settings_dialog.run()
         if response == Gtk.ResponseType.OK:
@@ -120,15 +120,18 @@ def app_main():
     win.connect("delete-event", Gtk.main_quit)
     win.show_all()
     win.emit("refresh")
+    # TODO: enable at the end of testing
+    # win.emit('update_app_state')
     
 
 if __name__ == '__main__':
-    print('Starting...\n')
+    print('Starting...\n')    
         
     init_database()
     app_main()
     Gtk.main()
 
+    print('\nDone.')
 
 # end of file
 

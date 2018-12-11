@@ -7,6 +7,7 @@ Created on Dec 8, 2018
 
 import os
 import gi
+from datetime import datetime
 from utils import svg_image_widget
 from settings import WEATHER_ICONS_PATH
 from app_state import get_weather_info_data
@@ -32,7 +33,7 @@ class WeatherInfoWidget(Gtk.VBox):
         self.widget_temperature.refresh('%s \u00B0C' % data['temperature'])        
         self.widget_wind_speed.refresh('%s kph' % data['wind_speed'])
         self.widget_humidity.refresh('%s %%' % data['humidity'])
-        self.widget_todays_date.refresh(data['todays_date'])
+        self.widget_todays_date.refresh(datetime.now().strftime('%A,%B %d %Y'))
 
     def text_widget(self, font_size='x-large', font_weight='light', margins=None):
         widget = Gtk.Box()
