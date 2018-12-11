@@ -4,19 +4,17 @@ Created on Dec 3, 2018
 @author: rabihkodeih
 '''
 
+import gi
+gi.require_version('Gtk', '3.0')
+from gi.repository import Gtk
 
+import threading
+import app_state
 from components.weather_info_widget import WeatherInfoWidget
 from components.weather_day_widget import WeatherDayWidget
 from components.weather_week_widget import WeatherWeekWidget
 from dialogs.settings_dialog import SettingsDialog
-
-import app_state
-import gi
-from storage import init_database, execute_query
-from settings import OPENWEATHERMAPAPI_KEY, OPENWEATHERMAP_URL, DATABASE_NAME
-from utils import fetch_weather_info_data
-gi.require_version('Gtk', '3.0')
-from gi.repository import Gtk, GObject
+from storage import init_database
 
 
 class MainWindow(Gtk.Window):
@@ -58,7 +56,7 @@ class MainWindow(Gtk.Window):
         hb.props.title = "Moonshot"
         # refresh button
         refresh_btn = Gtk.Button.new_from_icon_name("view-refresh-symbolic", Gtk.IconSize.BUTTON)
-        refresh_btn.connect("clicked", lambda _: self.emit('update_app_state'))
+        refresh_btn.connect("clicked", lambda _: app_state.async_update(self))
         hb.pack_start(refresh_btn)
         # temperature chart button
         tmpchart_btn = Gtk.Button.new_from_icon_name("utilities-system-monitor-symbolic", Gtk.IconSize.BUTTON)
@@ -102,30 +100,22 @@ class MainWindow(Gtk.Window):
     def location_selector_combo_changed(self, combo):
         location_id = combo.get_active_id()
         app_state.set_current_location_id(location_id)
-        self.emit('update_app_state')
-
-    @GObject.Signal
-    def update_app_state(self):
         app_state.async_update(self)
-        
-    @GObject.Signal    
-    def refresh(self):
-        self.weather_info_widget.emit('refresh')
-        self.weather_day_widget.emit('refresh')
-        self.weather_week_widget.emit('refresh')
 
-      
+
 def app_main():
     win = MainWindow()
-    win.connect("destroy", Gtk.main_quit)
     win.connect("delete-event", Gtk.main_quit)
     win.show_all()
-    win.emit("refresh")
-    
+    win.weather_info_widget.refresh()
+    win.weather_day_widget.refresh() 
+    win.weather_week_widget.refresh()    
+
 
 if __name__ == '__main__':
     print('Starting...\n')    
-        
+
+    print('starting main thread : ', threading.get_ident())
     init_database()
     app_main()
     Gtk.main()
@@ -136,11 +126,11 @@ if __name__ == '__main__':
 
 
 
-#TODO: apply PEP8 formating
+
 #TODO: add documentation where it counts
 #TODO: add some test cases (notably in store)
 #TODO: add a comprehensive readme github file with screenshots, installtion instructions and everything
-
+#TODO: apply PEP8 formating
 
 
 

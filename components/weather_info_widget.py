@@ -7,12 +7,13 @@ Created on Dec 8, 2018
 
 import os
 import gi
+import threading
 from datetime import datetime
 from utils import svg_image_widget
 from settings import WEATHER_ICONS_PATH
 from app_state import get_weather_info_data
 gi.require_version('Gtk', '3.0')
-from gi.repository import Gtk, GObject
+from gi.repository import Gtk
 
 
 class WeatherInfoWidget(Gtk.VBox):
@@ -26,8 +27,8 @@ class WeatherInfoWidget(Gtk.VBox):
         self.widget_todays_date = None
         self.init_components()
 
-    @GObject.Signal
     def refresh(self):
+        print('weather_info_widget:', threading.get_ident())
         data = get_weather_info_data()
         self.widget_weather_icon.refresh(os.path.join(WEATHER_ICONS_PATH, '%s.svg' % data['weather_icon_code']))
         self.widget_temperature.refresh('%s \u00B0C' % data['temperature'])        

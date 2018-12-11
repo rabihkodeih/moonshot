@@ -7,11 +7,12 @@ Created on Dec 8, 2018
 
 import os
 import gi
+import threading
 from utils import svg_image_widget
 from settings import WEATHER_ICONS_PATH
 from app_state import get_weather_week_data
 gi.require_version('Gtk', '3.0')
-from gi.repository import Gtk, GObject
+from gi.repository import Gtk
 
 
 class WeatherWeekWidget(Gtk.Box):
@@ -21,8 +22,8 @@ class WeatherWeekWidget(Gtk.Box):
         self.widgets_periods = []
         self.init_components()
 
-    @GObject.Signal
     def refresh(self):
+        print('weather_week_widget:', threading.get_ident())
         week_data = get_weather_week_data()
         for data, widget in zip(week_data, self.widgets_periods):
             widget.refresh(*data)

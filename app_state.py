@@ -10,12 +10,15 @@ from utils import fetch_weather_day_data
 from utils import fetch_weather_week_data
 from utils import fetch_weather_info_data
 from storage import execute_query
+from gi.repository import GLib
 
 
 def async_update(main_window):
+    print()
+    print('async update')
     async_update_weather_info_data(main_window)
     async_update_weather_day_data(main_window)
-    # async_update_weather_week_data(main_window)
+    async_update_weather_week_data(main_window)
     
     
 @new_thread
@@ -29,8 +32,8 @@ def async_update_weather_info_data(main_window):
                              'wind_speed': data.get('wind', {}).get('speed', '_'),
                              'humidity': data.get('main', {}).get('humidity', '_')}
         storage.set_json_value('WEATHER_INFO_DATA', weather_info_data)
-        main_window.emit('refresh')
-
+        GLib.idle_add(main_window.weather_info_widget.refresh)
+    
 
 @new_thread
 def async_update_weather_day_data(main_window):
@@ -39,7 +42,7 @@ def async_update_weather_day_data(main_window):
         latitude, longitude = location
         weather_day_data = fetch_weather_day_data(latitude, longitude)
         storage.set_json_value('WEATHER_DAY_DATA', weather_day_data)
-        main_window.emit('refresh')
+        GLib.idle_add(main_window.weather_day_widget.refresh)
 
 
 @new_thread
@@ -49,7 +52,7 @@ def async_update_weather_week_data(main_window):
         latitude, longitude = location
         weather_week_data = fetch_weather_week_data(latitude, longitude)
         storage.set_json_value('WEATHER_WEEK_DATA', weather_week_data)
-        main_window.emit('refresh')
+        GLib.idle_add(main_window.weather_week_widget.refresh)
     
 
 def get_locations():
