@@ -7,14 +7,11 @@ This is the moon shot weather desktop app. Technolgies used are Python3.6 and Gt
 ## Screen Shots
 These are some screenshots for the app:
 
-![UI_SCREENSHOT IMAGE](https://github.com/rabihkodeih/moonshot/blob/master/assets/screenshot_1.png | width=300)
-
-<img src="https://github.com/rabihkodeih/moonshot/blob/master/assets/screenshot_1.png" alt="alt text" width="300" >
-
-![UI_SCREENSHOT IMAGE](https://github.com/rabihkodeih/moonshot/blob/master/assets/screenshot_2.png | width=300)
-
-![UI_SCREENSHOT IMAGE](https://github.com/rabihkodeih/moonshot/blob/master/assets/screenshot_3.png | width=300)
-
+<span>
+<img src="https://github.com/rabihkodeih/moonshot/blob/master/assets/screenshot_1.png" alt="alt text" width="270" >
+<img src="https://github.com/rabihkodeih/moonshot/blob/master/assets/screenshot_1.png" alt="alt text" width="270" >
+<img src="https://github.com/rabihkodeih/moonshot/blob/master/assets/screenshot_1.png" alt="alt text" width="270" >
+</span>
 
 ## Architecture
 The app is designed using a main windows class (main.py module) and a number of components each having its own class
