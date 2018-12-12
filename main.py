@@ -15,6 +15,7 @@ from components.weather_day_widget import WeatherDayWidget
 from components.weather_week_widget import WeatherWeekWidget
 from dialogs.settings_dialog import SettingsDialog
 from storage import init_database
+from itertools import groupby
 
 
 class MainWindow(Gtk.Window):

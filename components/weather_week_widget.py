@@ -37,10 +37,10 @@ class WeatherWeekWidget(Gtk.Box):
         # temp box
         temp_box = Gtk.Box()
         temp_1_label = Gtk.Label()
-        temp_1_label.set_margin_left(6)
+        temp_1_label.set_margin_left(15)
         temp_box.pack_start(temp_1_label, True, True, 0)
         temp_2_label = Gtk.Label()
-        temp_2_label.set_margin_right(5)
+        temp_2_label.set_margin_right(15)
         temp_box.pack_end(temp_2_label, True, True, 0)
         # refresh closure
         def refresh(period, icon_code, temp_1, temp_2):
@@ -59,7 +59,7 @@ class WeatherWeekWidget(Gtk.Box):
         return period
 
     def init_components(self):
-        for _ in range(7):
+        for _ in range(5):
             period_widget = self.period_widget()
             self.widgets_periods.append(period_widget)
             self.pack_start(period_widget, True, True, 0)

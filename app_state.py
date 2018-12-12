@@ -30,6 +30,7 @@ def async_update_weather_info_data(main_window):
                              'wind_speed': data.get('wind', {}).get('speed', '_'),
                              'humidity': data.get('main', {}).get('humidity', '_')}
         storage.set_json_value('WEATHER_INFO_DATA', weather_info_data)
+        # this ensures all Gtk operations happen on the main thread
         GLib.idle_add(main_window.weather_info_widget.refresh)
     
 
@@ -40,6 +41,7 @@ def async_update_weather_day_data(main_window):
         latitude, longitude = location
         weather_day_data = fetch_weather_day_data(latitude, longitude)
         storage.set_json_value('WEATHER_DAY_DATA', weather_day_data)
+        # this ensures all Gtk operations happen on the main thread
         GLib.idle_add(main_window.weather_day_widget.refresh)
 
 
@@ -50,6 +52,7 @@ def async_update_weather_week_data(main_window):
         latitude, longitude = location
         weather_week_data = fetch_weather_week_data(latitude, longitude)
         storage.set_json_value('WEATHER_WEEK_DATA', weather_week_data)
+        # this ensures all Gtk operations happen on the main thread
         GLib.idle_add(main_window.weather_week_widget.refresh)
     
 
@@ -132,13 +135,13 @@ def get_weather_day_data():
 def get_weather_week_data():
     weather_week_data = storage.get_json_value('WEATHER_WEEK_DATA')
     if weather_week_data is None:
-        weather_week_data = [('MON', '02d', '_', '_'),
-                             ('TUE', '02d', '_', '_'),
-                             ('WED', '02d', '_', '_'),
-                             ('THU', '02d', '_', '_'),
-                             ('FRI', '02d', '_', '_'),
-                             ('SAT', '02d', '_', '_'),
-                             ('SUN', '02d', '_', '_')]
+        weather_week_data = [('___', '02d', '_', '_'),
+                             ('___', '02d', '_', '_'),
+                             ('___', '02d', '_', '_'),
+                             ('___', '02d', '_', '_'),
+                             ('___', '02d', '_', '_'),
+                             ('___', '02d', '_', '_'),
+                             ('___', '02d', '_', '_')]
     return weather_week_data
 
 

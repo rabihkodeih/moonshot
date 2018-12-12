@@ -15,6 +15,7 @@ from settings import OPENWEATHERMAPAPI_KEY
 from settings import OPENWEATHERMAP_URL
 from settings import BASE_DIR
 from functools import wraps
+from itertools import groupby
 from gi.repository import Gtk, Gdk, GdkPixbuf
 
 
@@ -76,29 +77,33 @@ def fetch_weather_week_data(latitude, longitude):
     constants.py. The inputs are lat-long based coordinates.
     '''
     location_query = 'lat=%s&lon=%s' % (latitude, longitude)
-    count_query = 'cnt=8'
     units_query = 'units=metric'
     auth_query = 'APPID=%s' % OPENWEATHERMAPAPI_KEY
-    url = "%s/forecast/daily?%s&%s&%s&%s" % (OPENWEATHERMAP_URL, location_query, 
-                                             count_query, units_query, auth_query)
+    url = "%s/forecast?%s&%s&%s" % (OPENWEATHERMAP_URL, location_query, units_query, auth_query)
     r = requests.get(url)
     if r.status_code == 200:
         data = r.json()
     else:
-        data = {}        
+        data = {}
     forecasts = data.get('list', [])
-    forecasts += [{}]*7
-    weather_week_data = []
-    for f in forecasts[:7]:
-        dt = f.get("dt")
-        if dt:
-            tmp = datetime.fromtimestamp(int(dt))
+    weather_week_data = []    
+    for f in forecasts:
+        forecast_time = f.get('dt_txt')
+        if forecast_time:
+            tmp = datetime.strptime(forecast_time, '%Y-%m-%d %H:%M:%S')
             week_day = datetime.strftime(tmp, '%a').upper()
         else:
             week_day = '___'
         icon_code = f.get('weather', [{}])[0].get('icon', '02d')
-        temp_min = f.get('temp', {}).get('min', '_')
-        temp_max = f.get('temp', {}).get('max', '_')
+        temp = f.get('main', {}).get('temp', '_')
+        weather_week_data.append((week_day, icon_code, temp))
+    groups = [list(j) for _, j in groupby(weather_week_data, key=lambda x:x[0])]
+    weather_week_data = []
+    for g in groups:
+        week_day = g[0][0]
+        temp_min = int(round(min(g, key=lambda x:x[2])[2]))
+        temp_max = int(round(max(g, key=lambda x:x[2])[2]))
+        icon_code = g[len(g)//2][1]
         weather_week_data.append((week_day, icon_code, temp_min, temp_max))
     return weather_week_data
 
