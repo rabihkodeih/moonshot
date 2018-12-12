@@ -8,13 +8,14 @@ import os
 import base64
 import json
 from utils import db_transaction
-from settings import BASE_DIR, DATABASE_NAME
+from settings import BASE_DIR
+from settings import DB_CONFIG
 
 
 @db_transaction
 def init_database(cursor):
     # make sure the db file is writable
-    sql_file = os.path.join(BASE_DIR, '%s.sqlite' % DATABASE_NAME)
+    sql_file = os.path.join(BASE_DIR, '%s.sqlite' % DB_CONFIG['DB_NAME'])
     os.system('chmod 664 "%s"' % sql_file)
     
     # create locations table

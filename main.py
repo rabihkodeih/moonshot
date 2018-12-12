@@ -5,6 +5,7 @@ Created on Dec 3, 2018
 '''
 
 import gi
+from settings import DB_CONFIG
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk
 
@@ -15,7 +16,6 @@ from components.weather_day_widget import WeatherDayWidget
 from components.weather_week_widget import WeatherWeekWidget
 from dialogs.settings_dialog import SettingsDialog
 from storage import init_database
-from itertools import groupby
 
 
 class MainWindow(Gtk.Window):
@@ -117,6 +117,7 @@ if __name__ == '__main__':
     print('Starting...\n')    
 
     print('starting main thread : ', threading.get_ident())
+    
     init_database()
     app_main()
     Gtk.main()
@@ -128,9 +129,15 @@ if __name__ == '__main__':
 
 
 
-#TODO: add documentation where it counts
 #TODO: add some test cases (notably in store)
-#TODO: add a comprehensive readme github file with screenshots, installtion instructions and everything
+#    changedb name to testdb
+#     DB_CONFIG['DB_NAME'] = 'test_db'
+#   tests:
+#        execute_query
+#        execute_scalar
+#        set_txt_value / get_txt_json_value
+#        set_json_value / get_json_value
+#TODO: add a comprehensive readme github file with screenshots, installtion instructions and everything (mimick that of britecore)
 #TODO: apply PEP8 formating
 
 

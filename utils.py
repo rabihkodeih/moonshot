@@ -10,7 +10,7 @@ import random
 import threading
 import requests
 from datetime import datetime
-from settings import DATABASE_NAME
+from settings import DB_CONFIG
 from settings import OPENWEATHERMAPAPI_KEY
 from settings import OPENWEATHERMAP_URL
 from settings import BASE_DIR
@@ -152,7 +152,7 @@ def db_transaction(func):
     '''
     @wraps(func)
     def wrapper(*args, **kwargs):
-        sql_file = os.path.join(BASE_DIR, '%s.sqlite' % DATABASE_NAME)
+        sql_file = os.path.join(BASE_DIR, '%s.sqlite' % DB_CONFIG['DB_NAME'])
         conn = sqlite3.connect(sql_file)
         cursor = conn.cursor()
         result = func(cursor, *args, **kwargs)
