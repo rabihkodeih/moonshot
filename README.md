@@ -7,13 +7,13 @@ This is the moon shot weather desktop app. Technolgies used are Python3.6 and Gt
 ## Screen Shots
 These are some screenshots for the app:
 
-
+<span>
 <img src="https://github.com/rabihkodeih/moonshot/blob/master/assets/screenshot_1.png" alt="alt text" width="270" >
-
+&nbsp&nbsp&nbsp&nbsp
 <img src="https://github.com/rabihkodeih/moonshot/blob/master/assets/screenshot_2.png" alt="alt text" width="270" >
-
+&nbsp&nbsp&nbsp&nbsp
 <img src="https://github.com/rabihkodeih/moonshot/blob/master/assets/screenshot_3.png" alt="alt text" width="270" >
-
+</span>
 
 ## Architecture
 The app is designed using a main windows class (main.py module) and a number of components each having its own class
@@ -51,14 +51,21 @@ Now you can install the requirements by
 
     pip3 install -r requirements.txt
 
+Run the application:
+
+    python main.py
+
 
 ## Installation (Ubuntu)
 
 First make sure that `Python3`, `pip3` and `virtualenv` are all installed and working fine:
 
-    apt-get update
-    apt-get dist-upgrade
-    apt-get install -y python3-dev virtualenv gcc 
+    sudo apt-get update
+    sudo apt-get dist-upgrade
+    sudo apt-get install -y python3-dev virtualenv gcc 
+    sudo apt-get install libgtk-3-dev
+    sudo apt-get install python3-gi
+    sudo apt-get install libffi
 
 Clone the repository into a destination directory, cd into it then create your virtual env using
 
@@ -71,17 +78,34 @@ and activate it by
 Now you can install the requirements by
 
     pip3 install -r requirements.txt
+
+Run the application:
+
+    python main.py
         
-
-
 
 
 ## Tests
 
-A standard django test suite was employed. There are two test cases, one for login sessions and db models, the other for the api section.
 To run test, simply issue:
 
-    ./manage.py test
+    python tests.py
+    
+The output should be something like this:
+
+    (tests.py:4597): Gtk-WARNING **: 15:08:25.502: Locale not supported by C library.
+        Using the fallback 'C' locale.
+    
+    Test "storage_execute_query" passed.
+    Test "storage_execute_scalar" passed.
+    Test "storage_set_json_value" passed.
+    Test "storage_set_txt_value" passed.
+    ----------------------------------------------------------------------
+    Ran 4 tests in 0.077s
+    
+    OK
+
+(end of readme)
 
 
 
