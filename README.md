@@ -9,6 +9,8 @@ These are some screenshots for the app:
 
 ![UI_SCREENSHOT IMAGE](https://github.com/rabihkodeih/moonshot/blob/master/assets/screenshot_1.png | width=300)
 
+<img src="https://github.com/rabihkodeih/moonshot/blob/master/assets/screenshot_1.png" alt="alt text" width="300" >
+
 ![UI_SCREENSHOT IMAGE](https://github.com/rabihkodeih/moonshot/blob/master/assets/screenshot_2.png | width=300)
 
 ![UI_SCREENSHOT IMAGE](https://github.com/rabihkodeih/moonshot/blob/master/assets/screenshot_3.png | width=300)
