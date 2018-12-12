@@ -1,4 +1,5 @@
 import os
+import sys
 import threading
 from datetime import datetime
 from utils import svg_image_widget
@@ -8,7 +9,7 @@ from gi.repository import Gtk
 
 
 class WeatherInfoWidget(Gtk.VBox):
-        
+
     def __init__(self):
         Gtk.VBox.__init__(self)
         self.widget_weather_icon = None
@@ -19,10 +20,10 @@ class WeatherInfoWidget(Gtk.VBox):
         self.init_components()
 
     def refresh(self):
-        print('weather_info_widget / thread id:', threading.get_ident())
+        sys.stdout.write('weather_info_widget / thread id: %s\n' % threading.get_ident())
         data = get_weather_info_data()
         self.widget_weather_icon.refresh(os.path.join(WEATHER_ICONS_PATH, '%s.svg' % data['weather_icon_code']))
-        self.widget_temperature.refresh('%s \u00B0C' % data['temperature'])        
+        self.widget_temperature.refresh('%s \u00B0C' % data['temperature'])
         self.widget_wind_speed.refresh('%s mps' % data['wind_speed'])
         self.widget_humidity.refresh('%s %%' % data['humidity'])
         self.widget_todays_date.refresh(datetime.now().strftime('%A,%B %d %Y'))
@@ -41,11 +42,11 @@ class WeatherInfoWidget(Gtk.VBox):
         widget.refresh = lambda text: label.set_markup(markup % (font_size, font_weight, text))
         return widget
 
-    def init_components(self):        
+    def init_components(self):
         # weather info
         grid = Gtk.Grid()
         self.widget_weather_icon = svg_image_widget(
-            size = 128 + 32,
+            size=160,
             margins=(25, 20, 0, 0)
         )
         weather_data_widget = Gtk.VBox()
@@ -62,14 +63,15 @@ class WeatherInfoWidget(Gtk.VBox):
         self.pack_start(grid, False, True, 0)
         # todays date
         self.widget_todays_date = Gtk.Label()
+
         def refresh_todays_date(today):
             today_1, today_2 = today.split(',')
             markup = ('<span font_size="xx-large" font_weight="bold">%s</span>\n' % today_1 +
                       '<span font_size="xx-large" font_weight="light">%s</span>' % today_2)
             self.widget_todays_date.set_markup(markup)
         self.widget_todays_date.refresh = refresh_todays_date
-        self.widget_todays_date.set_justify(Gtk.Justification.LEFT) 
+        self.widget_todays_date.set_justify(Gtk.Justification.LEFT)
         self.pack_start(self.widget_todays_date, False, True, 0)
-            
+
 
 # end of file

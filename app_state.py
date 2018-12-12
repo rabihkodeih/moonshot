@@ -11,14 +11,14 @@ def async_update(main_window):
     async_update_weather_info_data(main_window)
     async_update_weather_day_data(main_window)
     async_update_weather_week_data(main_window)
-    
-    
+
+
 @new_thread
 def async_update_weather_info_data(main_window):
     location = get_current_location()
     if location:
         latitude, longitude = location
-        data = fetch_weather_info_data(latitude, longitude)    
+        data = fetch_weather_info_data(latitude, longitude)
         weather_info_data = {'weather_icon_code': data.get('weather', [{}])[0].get('icon', '02d'),
                              'temperature': data.get('main', {}).get('temp', '_'),
                              'wind_speed': data.get('wind', {}).get('speed', '_'),
@@ -26,7 +26,7 @@ def async_update_weather_info_data(main_window):
         storage.set_json_value('WEATHER_INFO_DATA', weather_info_data)
         # this ensures all Gtk operations happen on the main thread
         GLib.idle_add(main_window.weather_info_widget.refresh)
-    
+
 
 @new_thread
 def async_update_weather_day_data(main_window):
@@ -48,7 +48,7 @@ def async_update_weather_week_data(main_window):
         storage.set_json_value('WEATHER_WEEK_DATA', weather_week_data)
         # this ensures all Gtk operations happen on the main thread
         GLib.idle_add(main_window.weather_week_widget.refresh)
-    
+
 
 def get_locations():
     query = 'SELECT id, name, latitude, longitude FROM locations;'
@@ -80,7 +80,7 @@ def save_locations(locations, deleted_locations):
             loc_id, name, latitude, longitude = loc
             query = 'UPDATE locations SET name="%s", latitude="%s", longitude="%s" WHERE ID=%s'
             query = query % (name, latitude, longitude, loc_id)
-            storage.execute_query(query)            
+            storage.execute_query(query)
 
 
 def get_current_location_id():
@@ -96,7 +96,7 @@ def get_current_location():
         result = None
     location = result[0] if result else None
     return location
-    
+
 
 def set_current_location_id(location_id):
     storage.set_text_value('CURRENT_LOCATION_ID', str(location_id))

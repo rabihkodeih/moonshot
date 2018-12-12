@@ -1,7 +1,4 @@
-import gi
-gi.require_version('Gtk', '3.0')
-from gi.repository import Gtk
-
+import sys
 import threading
 import app_state
 from components.weather_info_widget import WeatherInfoWidget
@@ -10,16 +7,20 @@ from components.weather_week_widget import WeatherWeekWidget
 from dialogs.settings_dialog import SettingsDialog
 from storage import init_database
 
+import gi
+gi.require_version('Gtk', '3.0')
+from gi.repository import Gtk  # @IgnorePep8
+
 
 class MainWindow(Gtk.Window):
-    
+
     def __init__(self):
         Gtk.Window.__init__(self, title='CM')
         self.weather_info_widget = None
         self.weather_day_widget = None
         self.weather_week_widget = None
         self.init_components()
-    
+
     def init_components(self):
         # window initialization
         self.set_border_width(10)
@@ -61,7 +62,7 @@ class MainWindow(Gtk.Window):
         hb.pack_start(settings_btn)
         return hb
 
-    def settings_btn_clicked(self, widget):
+    def settings_btn_clicked(self, widget):  # @UnusedVariable
         settings_dialog = SettingsDialog(self)
         response = settings_dialog.run()
         if response == Gtk.ResponseType.OK:
@@ -102,39 +103,14 @@ def app_main():
     win.connect("delete-event", Gtk.main_quit)
     win.show_all()
     win.weather_info_widget.refresh()
-    win.weather_day_widget.refresh() 
-    win.weather_week_widget.refresh()    
+    win.weather_day_widget.refresh()
+    win.weather_week_widget.refresh()
 
 
 if __name__ == '__main__':
-    print('Starting...\n')    
-
-    print('starting main thread : ', threading.get_ident())
+    sys.stdout.write('Starting main thread id: %s\n' % threading.get_ident())
     init_database()
     app_main()
     Gtk.main()
-    
-    print('\nDone.')
 
 # end of file
-
-
-
-
-#TODO: add some test cases (notably in store)
-#    changedb name to testdb
-#     DB_CONFIG['DB_NAME'] = 'test_db'
-#   tests:
-#        execute_query
-#        execute_scalar
-#        set_txt_value / get_txt_json_value
-#        set_json_value / get_json_value
-#TODO: add a comprehensive readme github file with screenshots, installtion instructions and everything (mimick that of britecore)
-#TODO: apply PEP8 formating
-
-
-
-
-
-
-

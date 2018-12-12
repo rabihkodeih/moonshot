@@ -1,14 +1,11 @@
 import os
 import sys
 import unittest
-
+from settings import DB_CONFIG, BASE_DIR
 import gi
 gi.require_version('Gtk', '3.0')
-import storage
-
-from settings import DB_CONFIG, BASE_DIR
-from storage import init_database
-
+import storage  # @IgnorePep8
+from storage import init_database  # @IgnorePep8
 
 
 class TestStringMethods(unittest.TestCase):
@@ -17,7 +14,7 @@ class TestStringMethods(unittest.TestCase):
         DB_CONFIG['DB_NAME'] = 'testdb'
         init_database()
         unittest.TestCase.setUp(self)
-    
+
     def tearDown(self):
         sql_file = os.path.join(BASE_DIR, '%s.sqlite' % DB_CONFIG['DB_NAME'])
         os.remove(sql_file)
@@ -25,7 +22,7 @@ class TestStringMethods(unittest.TestCase):
 
     def test_storage_execute_query(self):
         query = '''
-            INSERT INTO locations (id, name, latitude, longitude) VALUES 
+            INSERT INTO locations (id, name, latitude, longitude) VALUES
             (1, "NAME_1", "LAT_1", "LONG_1"),
             (2, "NAME_2", "LAT_2", "LONG_2"),
             (3, "NAME_3", "LAT_3", "LONG_3");
@@ -33,7 +30,7 @@ class TestStringMethods(unittest.TestCase):
         storage.execute_query(query)
         rows = storage.execute_query('SELECT id, name, latitude, longitude FROM locations ORDER BY id;')
         self.assertEqual(
-            rows, 
+            rows,
             [(1, 'NAME_1', 'LAT_1', 'LONG_1'),
              (2, 'NAME_2', 'LAT_2', 'LONG_2'),
              (3, 'NAME_3', 'LAT_3', 'LONG_3')]
@@ -42,7 +39,7 @@ class TestStringMethods(unittest.TestCase):
 
     def test_storage_execute_scalar(self):
         query = '''
-            INSERT INTO locations (id, name, latitude, longitude) VALUES 
+            INSERT INTO locations (id, name, latitude, longitude) VALUES
             (1, "NAME_1", "LAT_1", "LONG_1"),
             (2, "NAME_2", "LAT_2", "LONG_2"),
             (3, "NAME_3", "LAT_3", "LONG_3");
@@ -84,6 +81,6 @@ class TestStringMethods(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
-    
+
 
 # end of file

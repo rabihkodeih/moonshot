@@ -1,4 +1,5 @@
 import os
+import sys
 import threading
 from utils import svg_image_widget
 from settings import WEATHER_ICONS_PATH
@@ -9,12 +10,12 @@ from gi.repository import Gtk
 class WeatherWeekWidget(Gtk.Box):
 
     def __init__(self):
-        Gtk.Box.__init__(self)        
+        Gtk.Box.__init__(self)
         self.widgets_periods = []
         self.init_components()
 
     def refresh(self):
-        print('weather_week_widget / thread id:', threading.get_ident())
+        sys.stdout.write('weather_week_widget / thread id: %s\n' % threading.get_ident())
         week_data = get_weather_week_data()
         for data, widget in zip(week_data, self.widgets_periods):
             widget.refresh(*data)
@@ -30,12 +31,13 @@ class WeatherWeekWidget(Gtk.Box):
         # temp box
         temp_box = Gtk.Box()
         temp_1_label = Gtk.Label()
-        temp_1_label.set_margin_left(15)
+        temp_1_label.set_margin_left(20)
         temp_box.pack_start(temp_1_label, True, True, 0)
         temp_2_label = Gtk.Label()
-        temp_2_label.set_margin_right(15)
+        temp_2_label.set_margin_right(20)
         temp_box.pack_end(temp_2_label, True, True, 0)
         # refresh closure
+
         def refresh(period, icon_code, temp_1, temp_2):
             markup = '<span font_size="%s" font_weight="light">%s</span>' % (f_size, period)
             period_label.set_markup(markup)
@@ -57,5 +59,5 @@ class WeatherWeekWidget(Gtk.Box):
             self.widgets_periods.append(period_widget)
             self.pack_start(period_widget, True, True, 0)
 
-    
+
 # end of file

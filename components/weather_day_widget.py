@@ -1,4 +1,5 @@
 import os
+import sys
 import threading
 from utils import svg_image_widget
 from settings import WEATHER_ICONS_PATH
@@ -14,11 +15,11 @@ class WeatherDayWidget(Gtk.Box):
         self.init_components()
 
     def refresh(self):
-        print('weather_day_widget / thread id:', threading.get_ident())
+        sys.stdout.write('weather_day_widget / thread id: %s\n' % threading.get_ident())
         day_data = get_weather_day_data()
         for data, widget in zip(day_data, self.widgets_periods):
             widget.refresh(*data)
-        
+
     def period_widget(self):
         # period
         period = Gtk.VBox()
@@ -26,12 +27,13 @@ class WeatherDayWidget(Gtk.Box):
         period_label = Gtk.Label()
         f_size = "12480"
         # weather image
-        weather_image = svg_image_widget( size=32, margins=(5, 0, 5, 0))
+        weather_image = svg_image_widget(size=32, margins=(5, 0, 5, 0))
         # temp box
         temp_box = Gtk.Box()
         temp_label = Gtk.Label()
         temp_box.pack_start(temp_label, True, True, 0)
         # refresh closure
+
         def refresh(period, icon_code, temp):
             markup = '<span font_size="%s" font_weight="light">%s</span>' % (f_size, period)
             period_label.set_markup(markup)
@@ -50,6 +52,6 @@ class WeatherDayWidget(Gtk.Box):
             period_widget = self.period_widget()
             self.widgets_periods.append(period_widget)
             self.pack_start(period_widget, True, True, 0)
-    
+
 
 # end of file

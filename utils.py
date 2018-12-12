@@ -13,7 +13,6 @@ from itertools import groupby
 from gi.repository import Gtk, Gdk, GdkPixbuf
 
 
-
 def fetch_weather_info_data(latitude, longitude):
     '''
     This function gets the weather info data from the online
@@ -49,7 +48,7 @@ def fetch_weather_day_data(latitude, longitude):
         data = {}
     forecasts = data.get('list', [])
     forecasts += [{}]*8
-    weather_day_data = []    
+    weather_day_data = []
     for f in forecasts[:8]:
         forecast_time = f.get('dt_txt')
         if forecast_time:
@@ -80,7 +79,7 @@ def fetch_weather_week_data(latitude, longitude):
     else:
         data = {}
     forecasts = data.get('list', [])
-    weather_week_data = []    
+    weather_week_data = []
     for f in forecasts:
         forecast_time = f.get('dt_txt')
         if forecast_time:
@@ -89,14 +88,16 @@ def fetch_weather_week_data(latitude, longitude):
         else:
             week_day = '___'
         icon_code = f.get('weather', [{}])[0].get('icon', '02d')
+        if icon_code.endswith('n'):
+            icon_code = icon_code[:-1] + 'd'
         temp = f.get('main', {}).get('temp', '_')
         weather_week_data.append((week_day, icon_code, temp))
     groups = [list(j) for _, j in groupby(weather_week_data, key=lambda x:x[0])]
     weather_week_data = []
     for g in groups:
         week_day = g[0][0]
-        temp_min = int(round(min(g, key=lambda x:x[2])[2]))
-        temp_max = int(round(max(g, key=lambda x:x[2])[2]))
+        temp_min = int(round(min(g, key=lambda x: x[2])[2]))
+        temp_max = int(round(max(g, key=lambda x: x[2])[2]))
         icon_code = g[len(g)//2][1]
         weather_week_data.append((week_day, icon_code, temp_min, temp_max))
     return weather_week_data
@@ -109,6 +110,7 @@ def debug_background(show):
     '''
     rgba = [0.5 + 0.5*random.random() for _ in range(3)]
     rgba.append(1.0)
+
     def real_decorator(func):
         @wraps(func)
         def wrapper(*args, **kwargs):
@@ -154,7 +156,7 @@ def db_transaction(func):
         conn.close()
         return result
     return wrapper
-    
+
 
 def svg_image_widget(size=128, margins=None):
     '''
@@ -167,6 +169,7 @@ def svg_image_widget(size=128, margins=None):
     height = size
     preserve_aspect_ratio = True
     image = Gtk.Image()
+
     def refresh_svg(svg_path):
         pixbuf = GdkPixbuf.Pixbuf.new_from_file_at_scale(
             svg_path, width, height, preserve_aspect_ratio)

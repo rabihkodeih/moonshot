@@ -1,7 +1,7 @@
 import gi
 from constants import GNOME_ICON_THEME_SYMBOLIC
 gi.require_version('Gtk', '3.0')
-from gi.repository import Gtk, Gio
+from gi.repository import Gtk, Gio  # @IgnorePep8
 
 
 class SymbolicThemeWindow(Gtk.Window):
@@ -20,7 +20,7 @@ class SymbolicThemeWindow(Gtk.Window):
             hbox.pack_start(image, False, True, 0)
             listbox.add(row)
         return listbox
-    
+
     def __init__(self):
         Gtk.Window.__init__(self, title="gnome-icon-theme-symbolic theme")
         self.set_border_width(10)
@@ -40,11 +40,7 @@ def launch_main():
 
 
 if __name__ == '__main__':
-    print('Starting...\n')
-
     launch_main()
-        
-    print('\nDone.')
-    
+
 
 # end of file
