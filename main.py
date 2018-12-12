@@ -1,11 +1,4 @@
-'''
-Created on Dec 3, 2018
-
-@author: rabihkodeih
-'''
-
 import gi
-from settings import DB_CONFIG
 gi.require_version('Gtk', '3.0')
 from gi.repository import Gtk
 
@@ -117,7 +110,6 @@ if __name__ == '__main__':
     print('Starting...\n')    
 
     print('starting main thread : ', threading.get_ident())
-    
     init_database()
     app_main()
     Gtk.main()

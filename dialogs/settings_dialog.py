@@ -1,9 +1,3 @@
-'''
-Created on Dec 9, 2018
-
-@author: rabihkodeih
-'''
-
 import app_state
 from gi.repository import Gtk
 

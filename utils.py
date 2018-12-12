@@ -1,9 +1,3 @@
-'''
-Created on Dec 8, 2018
-
-@author: rabihkodeih
-'''
-
 import os
 import sqlite3
 import random

@@ -1,9 +1,3 @@
-'''
-Created on Dec 8, 2018
-
-@author: rabihkodeih
-'''
-
 import storage
 from utils import new_thread
 from utils import fetch_weather_day_data

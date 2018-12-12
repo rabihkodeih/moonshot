@@ -1,9 +1,3 @@
-'''
-Created on Dec 3, 2018
-
-@author: rabihkodeih
-'''
-
 import gi
 from constants import GNOME_ICON_THEME_SYMBOLIC
 gi.require_version('Gtk', '3.0')

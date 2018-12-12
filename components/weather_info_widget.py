@@ -1,10 +1,3 @@
-'''
-Created on Dec 8, 2018
-
-@author: rabihkodeih
-'''
-
-
 import os
 import threading
 from datetime import datetime

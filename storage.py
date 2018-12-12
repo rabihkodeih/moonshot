@@ -1,9 +1,3 @@
-'''
-Created on Dec 10, 2018
-
-@author: rabihkodeih
-'''
-
 import os
 import base64
 import json
