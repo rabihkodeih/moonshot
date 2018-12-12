@@ -9,8 +9,10 @@ These are some screenshots for the app:
 
 <span>
 <img src="https://github.com/rabihkodeih/moonshot/blob/master/assets/screenshot_1.png" alt="alt text" width="270" >
-<img src="https://github.com/rabihkodeih/moonshot/blob/master/assets/screenshot_1.png" alt="alt text" width="270" >
-<img src="https://github.com/rabihkodeih/moonshot/blob/master/assets/screenshot_1.png" alt="alt text" width="270" >
+    
+<img src="https://github.com/rabihkodeih/moonshot/blob/master/assets/screenshot_2.png" alt="alt text" width="270" >
+
+<img src="https://github.com/rabihkodeih/moonshot/blob/master/assets/screenshot_3.png" alt="alt text" width="270" >
 </span>
 
 ## Architecture
