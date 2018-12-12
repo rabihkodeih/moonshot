@@ -31,10 +31,10 @@ class WeatherWeekWidget(Gtk.Box):
         # temp box
         temp_box = Gtk.Box()
         temp_1_label = Gtk.Label()
-        temp_1_label.set_margin_left(20)
+        temp_1_label.set_margin_left(18)
         temp_box.pack_start(temp_1_label, True, True, 0)
         temp_2_label = Gtk.Label()
-        temp_2_label.set_margin_right(20)
+        temp_2_label.set_margin_right(18)
         temp_box.pack_end(temp_2_label, True, True, 0)
         # refresh closure
 

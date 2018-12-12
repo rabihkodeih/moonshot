@@ -3,6 +3,9 @@ import sqlite3
 import random
 import threading
 import requests
+import timezonefinder
+import pytz
+
 from datetime import datetime
 from settings import DB_CONFIG
 from settings import OPENWEATHERMAPAPI_KEY
@@ -11,6 +14,22 @@ from settings import BASE_DIR
 from functools import wraps
 from itertools import groupby
 from gi.repository import Gtk, Gdk, GdkPixbuf
+
+
+def correct_timezone(dt_value, latitude, longitude):
+    '''
+    Applies timezone correction to a date-time object
+    using latitude and longitude information
+    '''
+    latitude, longitude = float(latitude), float(longitude)
+    tf = timezonefinder.TimezoneFinder()
+    timezone_str = tf.certain_timezone_at(lat=latitude, lng=longitude)
+    if timezone_str is None:
+        tz_corrected = dt_value
+    else:
+        timezone = pytz.timezone(timezone_str)
+        tz_corrected = dt_value + timezone.utcoffset(dt_value)
+    return tz_corrected
 
 
 def fetch_weather_info_data(latitude, longitude):
@@ -53,6 +72,7 @@ def fetch_weather_day_data(latitude, longitude):
         forecast_time = f.get('dt_txt')
         if forecast_time:
             tmp = datetime.strptime(forecast_time, '%Y-%m-%d %H:%M:%S')
+            tmp = correct_timezone(tmp, latitude, longitude)
             forecast_time = datetime.strftime(tmp, '%-I %p')
             forecast_time = forecast_time.replace('12 PM', 'NOON').replace('12 AM', 'MIDN')
         else:

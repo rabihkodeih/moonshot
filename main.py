@@ -1,15 +1,19 @@
+import gi
+try:
+    gi.require_version('Gtk', '3.0')
+except Exception:
+    raise
+from gi.repository import Gtk
+
 import sys
 import threading
 import app_state
+
 from components.weather_info_widget import WeatherInfoWidget
 from components.weather_day_widget import WeatherDayWidget
 from components.weather_week_widget import WeatherWeekWidget
 from dialogs.settings_dialog import SettingsDialog
 from storage import init_database
-
-import gi
-gi.require_version('Gtk', '3.0')
-from gi.repository import Gtk  # @IgnorePep8
 
 
 class MainWindow(Gtk.Window):
