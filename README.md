@@ -1,7 +1,7 @@
 # Moonshot Test App
 
 ## Summary
-This is the moon shot weather desktop app. Technolgies used are Python3.6 and Gtk+.
+This is the moonshot weather desktop app. Technolgies used are Python3.6 and Gtk+.
 
 
 ## Screen Shots
