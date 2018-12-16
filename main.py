@@ -119,6 +119,7 @@ def app_main():
     win.connect("delete-event", Gtk.main_quit)
     win.show_all()
     win.refresh()
+    app_state.sample_historical_data()
 
 
 if __name__ == '__main__':

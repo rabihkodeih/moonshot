@@ -15,6 +15,10 @@ from functools import wraps
 from itertools import groupby
 from gi.repository import Gtk, Gdk, GdkPixbuf
 
+# the following thread lock is used for the database access operations
+# because sqlite3 isn't thread safe
+DB_LOCK = threading.Lock()
+
 
 def correct_timezone(dt_value, latitude, longitude):
     '''
@@ -169,11 +173,13 @@ def db_transaction(func):
     @wraps(func)
     def wrapper(*args, **kwargs):
         sql_file = os.path.join(BASE_DIR, '%s.sqlite' % DB_CONFIG['DB_NAME'])
+        DB_LOCK.acquire()
         conn = sqlite3.connect(sql_file)
         cursor = conn.cursor()
         result = func(cursor, *args, **kwargs)
         conn.commit()
         conn.close()
+        DB_LOCK.release()
         return result
     return wrapper
 
