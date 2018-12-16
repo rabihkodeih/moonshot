@@ -30,6 +30,7 @@ decoratros (utils.py module) are used to simplify the code logic and readability
 
 Here is a summary of important modules and packages:
 
+    main.py         : implements the main window object and application launching logic
     storage.py      : implements the data storage engine (based on sqlite3)
     app_state.py    : the application state management module, get/save app state data
     settings.py     : holds the settings used by the app

@@ -101,14 +101,24 @@ class MainWindow(Gtk.Window):
         app_state.set_current_location_id(location_id)
         app_state.async_update(self)
 
+    def refresh(self, weather_data_type=None):
+        if not weather_data_type:
+            self.weather_info_widget.refresh()
+            self.weather_day_widget.refresh()
+            self.weather_week_widget.refresh()
+        elif weather_data_type == 'weather_info':
+            self.weather_info_widget.refresh()
+        elif weather_data_type == 'weather_day':
+            self.weather_day_widget.refresh()
+        elif weather_data_type == 'weather_week':
+            self.weather_week_widget.refresh()
+
 
 def app_main():
     win = MainWindow()
     win.connect("delete-event", Gtk.main_quit)
     win.show_all()
-    win.weather_info_widget.refresh()
-    win.weather_day_widget.refresh()
-    win.weather_week_widget.refresh()
+    win.refresh()
 
 
 if __name__ == '__main__':

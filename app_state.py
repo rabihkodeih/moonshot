@@ -25,7 +25,7 @@ def async_update_weather_info_data(main_window):
                              'humidity': data.get('main', {}).get('humidity', '_')}
         storage.set_json_value('WEATHER_INFO_DATA', weather_info_data)
         # this ensures all Gtk operations happen on the main thread
-        GLib.idle_add(main_window.weather_info_widget.refresh)
+        GLib.idle_add(main_window.refresh, 'weather_info')
 
 
 @new_thread
@@ -36,7 +36,7 @@ def async_update_weather_day_data(main_window):
         weather_day_data = fetch_weather_day_data(latitude, longitude)
         storage.set_json_value('WEATHER_DAY_DATA', weather_day_data)
         # this ensures all Gtk operations happen on the main thread
-        GLib.idle_add(main_window.weather_day_widget.refresh)
+        GLib.idle_add(main_window.refresh, 'weather_day')
 
 
 @new_thread
@@ -47,7 +47,7 @@ def async_update_weather_week_data(main_window):
         weather_week_data = fetch_weather_week_data(latitude, longitude)
         storage.set_json_value('WEATHER_WEEK_DATA', weather_week_data)
         # this ensures all Gtk operations happen on the main thread
-        GLib.idle_add(main_window.weather_week_widget.refresh)
+        GLib.idle_add(main_window.refresh, 'weather_week')
 
 
 def get_locations():

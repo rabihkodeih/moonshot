@@ -32,6 +32,18 @@ def init_database(cursor):
     '''
     cursor.execute(query)
 
+    # create history table
+    query = '''
+        CREATE TABLE IF NOT EXISTS history (
+            id INTEGER PRIMARY KEY,
+            location_id INTEGER NOT NULL,
+            temperature TEXT NOT NULL,
+            wind_speed TEXT NOT NULL,
+            humidity TEXT NOT NULL
+        )
+    '''
+    cursor.execute(query)
+
 
 @db_transaction
 def execute_query(cursor, query):
