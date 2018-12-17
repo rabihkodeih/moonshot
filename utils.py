@@ -1,5 +1,3 @@
-import os
-import sqlite3
 import random
 import threading
 import requests
@@ -7,17 +5,12 @@ import timezonefinder
 import pytz
 
 from datetime import datetime
-from settings import DB_CONFIG
 from settings import OPENWEATHERMAPAPI_KEY
 from settings import OPENWEATHERMAP_URL
-from settings import BASE_DIR
+
 from functools import wraps
 from itertools import groupby
 from gi.repository import Gtk, Gdk, GdkPixbuf
-
-# the following thread lock is used for the database access operations
-# because sqlite3 isn't thread safe
-DB_LOCK = threading.Lock()
 
 
 def correct_timezone(dt_value, latitude, longitude):
@@ -149,41 +142,6 @@ def debug_background(show):
     return real_decorator
 
 
-def new_thread(func):
-    '''
-    This decorator runs <func> in a separate thread so as not to block
-    the main Gtk UI thread.
-    '''
-    @wraps(func)
-    def wrapper(*args, **kwargs):
-        thread = threading.Thread(target=func, args=args, kwargs=kwargs)
-        thread.daemon = True
-        thread.start()
-        return thread
-    return wrapper
-
-
-def db_transaction(func):
-    '''
-    This decorator abstracts away sqlite3 database connection
-    and transaction processing. The resultant function will
-    be passed a cursor object that can be used in various db
-    operations.
-    '''
-    @wraps(func)
-    def wrapper(*args, **kwargs):
-        sql_file = os.path.join(BASE_DIR, '%s.sqlite' % DB_CONFIG['DB_NAME'])
-        DB_LOCK.acquire()
-        conn = sqlite3.connect(sql_file)
-        cursor = conn.cursor()
-        result = func(cursor, *args, **kwargs)
-        conn.commit()
-        conn.close()
-        DB_LOCK.release()
-        return result
-    return wrapper
-
-
 def svg_image_widget(size=128, margins=None):
     '''
     This function returns a PyGobject image object given an svg
@@ -208,6 +166,20 @@ def svg_image_widget(size=128, margins=None):
         image.set_margin_bottom(bottom)
         image.set_margin_right(right)
     return image
+
+
+def new_thread(func):
+    '''
+    This decorator runs <func> in a separate thread so as not to block
+    the main Gtk UI thread.
+    '''
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        thread = threading.Thread(target=func, args=args, kwargs=kwargs)
+        thread.daemon = True
+        thread.start()
+        return thread
+    return wrapper
 
 
 # end of file

@@ -1,12 +1,13 @@
 import time
 import storage
+from datetime import datetime, timedelta
 from utils import new_thread
 from utils import fetch_weather_day_data
 from utils import fetch_weather_week_data
 from utils import fetch_weather_info_data
 from storage import execute_query
 from gi.repository import GLib
-from settings import HISTORY_SAMPLING_PERIOD_SECS
+from settings import HISTORY_SAMPLING_PERIOD_HOURS
 
 
 def async_update(main_window):
@@ -54,29 +55,38 @@ def async_update_weather_week_data(main_window):
 
 @new_thread
 def sample_historical_data():
-    count = 1
+
+    @new_thread
+    def update_history(location):
+        loc_id, _, latitude, longitude = location
+        data = fetch_weather_info_data(latitude, longitude)
+        temp = data.get('main', {}).get('temp')
+        wind_speed = data.get('wind', {}).get('speed')
+        humidity = data.get('main', {}).get('humidity')
+        values = (loc_id, temp, wind_speed, humidity, datetime.now())
+        query = ('INSERT INTO history (location_id, temperature, wind_speed, humidity, sample_time) '
+                 'VALUES (?, ?, ?, ?, ?);')
+        execute_query(query, values)
+
+    def get_next_sampling_time():
+        now = datetime.now()
+        sampling_time = now + timedelta(hours=HISTORY_SAMPLING_PERIOD_HOURS)
+        sampling_time = sampling_time.replace(
+            hour=(sampling_time.hour // HISTORY_SAMPLING_PERIOD_HOURS) * HISTORY_SAMPLING_PERIOD_HOURS,
+            minute=0,
+            second=0,
+            microsecond=0
+        )
+        return sampling_time
+
+    # run sampling loop
     while True:
-        print(count)
-        count += 1
+        sampling_time = get_next_sampling_time()
+        while datetime.now() < sampling_time:
+            time.sleep(10)
+        # execute sampling tasks
         for location in get_locations():
-            print(location)
-
-            @new_thread
-            def update_history():
-
-                loc_id, _, latitude, longitude = location
-                data = fetch_weather_info_data(latitude, longitude)
-                weather_info_data = {'weather_icon_code': data.get('weather', [{}])[0].get('icon', '02d'),
-                                     'temperature': data.get('main', {}).get('temp', '_'),
-                                     'wind_speed': data.get('wind', {}).get('speed', '_'),
-                                     'humidity': data.get('main', {}).get('humidity', '_')}
-
-                query = ''
-                print(query)
-
-            update_history()
-        print()
-        time.sleep(HISTORY_SAMPLING_PERIOD_SECS)
+            update_history(location)
 
 
 def get_locations():

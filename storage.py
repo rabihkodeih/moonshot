@@ -1,9 +1,37 @@
 import os
+import sqlite3
 import base64
+import threading
 import json
-from utils import db_transaction
+
+from functools import wraps
 from settings import BASE_DIR
 from settings import DB_CONFIG
+
+# the following thread lock is used for the database access operations
+# because sqlite3 isn't thread safe
+DB_LOCK = threading.Lock()
+
+
+def db_transaction(func):
+    '''
+    This decorator abstracts away sqlite3 database connection
+    and transaction processing. The resultant function will
+    be passed a cursor object that can be used in various db
+    operations.
+    '''
+    @wraps(func)
+    def wrapper(*args, **kwargs):
+        sql_file = os.path.join(BASE_DIR, '%s.sqlite' % DB_CONFIG['DB_NAME'])
+        DB_LOCK.acquire()
+        conn = sqlite3.connect(sql_file, detect_types=sqlite3.PARSE_DECLTYPES)
+        cursor = conn.cursor()
+        result = func(cursor, *args, **kwargs)
+        conn.commit()
+        conn.close()
+        DB_LOCK.release()
+        return result
+    return wrapper
 
 
 @db_transaction
@@ -37,23 +65,24 @@ def init_database(cursor):
         CREATE TABLE IF NOT EXISTS history (
             id INTEGER PRIMARY KEY,
             location_id INTEGER NOT NULL,
-            temperature TEXT NOT NULL,
-            wind_speed TEXT NOT NULL,
-            humidity TEXT NOT NULL
+            temperature TEXT,
+            wind_speed TEXT,
+            humidity TEXT,
+            sample_time TIMESTAMP NOT NULL
         )
     '''
     cursor.execute(query)
 
 
 @db_transaction
-def execute_query(cursor, query):
-    cursor.execute(query)
+def execute_query(cursor, query, *args):
+    cursor.execute(query, *args)
     return cursor.fetchall()
 
 
 @db_transaction
-def execute_scalar(cursor, query):
-    cursor.execute(query)
+def execute_scalar(cursor, query, *args):
+    cursor.execute(query, *args)
     return cursor.fetchall()[0][0]
 
 
