@@ -53,11 +53,23 @@ def async_update_weather_week_data(main_window):
         GLib.idle_add(main_window.refresh, 'weather_week')
 
 
+def get_next_sampling_time():
+    now = datetime.now()
+    sampling_time = now + timedelta(hours=HISTORY_SAMPLING_PERIOD_HOURS)
+    sampling_time = sampling_time.replace(
+        hour=(sampling_time.hour // HISTORY_SAMPLING_PERIOD_HOURS) * HISTORY_SAMPLING_PERIOD_HOURS,
+        minute=0,
+        second=0,
+        microsecond=0
+    )
+    return sampling_time
+
+
 @new_thread
 def sample_historical_data():
 
     @new_thread
-    def update_history(location):
+    def sample_weather_data(location):
         loc_id, _, latitude, longitude = location
         data = fetch_weather_info_data(latitude, longitude)
         temp = data.get('main', {}).get('temp')
@@ -68,25 +80,13 @@ def sample_historical_data():
                  'VALUES (?, ?, ?, ?, ?);')
         execute_query(query, values)
 
-    def get_next_sampling_time():
-        now = datetime.now()
-        sampling_time = now + timedelta(hours=HISTORY_SAMPLING_PERIOD_HOURS)
-        sampling_time = sampling_time.replace(
-            hour=(sampling_time.hour // HISTORY_SAMPLING_PERIOD_HOURS) * HISTORY_SAMPLING_PERIOD_HOURS,
-            minute=0,
-            second=0,
-            microsecond=0
-        )
-        return sampling_time
-
     # run sampling loop
     while True:
         sampling_time = get_next_sampling_time()
         while datetime.now() < sampling_time:
             time.sleep(10)
-        # execute sampling tasks
         for location in get_locations():
-            update_history(location)
+            sample_weather_data(location)
 
 
 def get_locations():
