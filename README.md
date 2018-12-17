@@ -16,7 +16,7 @@ These are some screenshots for the app:
 </span>
 
 <span>
-<img src="https://github.com/rabihkodeih/moonshot/blob/master/assets/screenshot_4.png" alt="alt text" width="270" >
+<img src="https://github.com/rabihkodeih/moonshot/blob/master/assets/screenshot_4.png" alt="alt text" width="540" >
 </span>
 
 
