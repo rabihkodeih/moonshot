@@ -20,7 +20,7 @@ def async_update(main_window):
 def async_update_weather_info_data(main_window):
     location = get_current_location()
     if location:
-        latitude, longitude = location
+        _, _, latitude, longitude = location
         data = fetch_weather_info_data(latitude, longitude)
         weather_info_data = {'weather_icon_code': data.get('weather', [{}])[0].get('icon', '02d'),
                              'temperature': data.get('main', {}).get('temp', '_'),
@@ -35,7 +35,7 @@ def async_update_weather_info_data(main_window):
 def async_update_weather_day_data(main_window):
     location = get_current_location()
     if location:
-        latitude, longitude = location
+        _, _, latitude, longitude = location
         weather_day_data = fetch_weather_day_data(latitude, longitude)
         storage.set_json_value('WEATHER_DAY_DATA', weather_day_data)
         # this ensures all Gtk operations happen on the main thread
@@ -46,7 +46,7 @@ def async_update_weather_day_data(main_window):
 def async_update_weather_week_data(main_window):
     location = get_current_location()
     if location:
-        latitude, longitude = location
+        _, _, latitude, longitude = location
         weather_week_data = fetch_weather_week_data(latitude, longitude)
         storage.set_json_value('WEATHER_WEEK_DATA', weather_week_data)
         # this ensures all Gtk operations happen on the main thread
@@ -89,6 +89,11 @@ def sample_historical_data():
             sample_weather_data(location)
 
 
+def get_historical_temp_data(location_id):
+    query = 'SELECT temperature, sample_time FROM history WHERE location_id = %s ORDER BY sample_time DESC;'
+    return execute_query(query % location_id)
+
+
 def get_locations():
     query = 'SELECT id, name, latitude, longitude FROM locations;'
     locations = ([str(f) for f in r] for r in storage.execute_query(query))
@@ -129,7 +134,7 @@ def get_current_location_id():
 def get_current_location():
     current_location_id = storage.get_text_value('CURRENT_LOCATION_ID')
     if current_location_id:
-        query = 'SELECT latitude, longitude FROM locations WHERE id=%s' % current_location_id
+        query = 'SELECT id, name, latitude, longitude FROM locations WHERE id=%s' % current_location_id
         result = execute_query(query)
     else:
         result = None

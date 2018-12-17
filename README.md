@@ -15,6 +15,11 @@ These are some screenshots for the app:
 <img src="https://github.com/rabihkodeih/moonshot/blob/master/assets/screenshot_3.png" alt="alt text" width="270" >
 </span>
 
+<span>
+<img src="https://github.com/rabihkodeih/moonshot/blob/master/assets/screenshot_4.png" alt="alt text" width="270" >
+</span>
+
+
 ## Architecture
 The app is designed using a main windows class (main.py module) and a number of components each having its own class
 (components.py and dialogs.py modules). Each window/widget/component has one and only one method to refresh its UI, 

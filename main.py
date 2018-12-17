@@ -13,6 +13,7 @@ from components.weather_info_widget import WeatherInfoWidget
 from components.weather_day_widget import WeatherDayWidget
 from components.weather_week_widget import WeatherWeekWidget
 from dialogs.settings_dialog import SettingsDialog
+from dialogs.temp_chart_dialog import TempChartDialog
 from storage import init_database
 
 
@@ -58,13 +59,19 @@ class MainWindow(Gtk.Window):
         refresh_btn.connect("clicked", lambda _: app_state.async_update(self))
         hb.pack_start(refresh_btn)
         # temperature chart button
-        tmpchart_btn = Gtk.Button.new_from_icon_name("utilities-system-monitor-symbolic", Gtk.IconSize.BUTTON)
-        hb.pack_start(tmpchart_btn)
+        tempchart_btn = Gtk.Button.new_from_icon_name("utilities-system-monitor-symbolic", Gtk.IconSize.BUTTON)
+        tempchart_btn.connect('clicked', self.tmpchart_btn_clicked)
+        hb.pack_start(tempchart_btn)
         # settings button
         settings_btn = Gtk.Button.new_from_icon_name("emblem-system-symbolic", Gtk.IconSize.BUTTON)
         settings_btn.connect('clicked', self.settings_btn_clicked)
         hb.pack_start(settings_btn)
         return hb
+
+    def tmpchart_btn_clicked(self, widget):  # @UnusedVariable
+        tempchart_dialog = TempChartDialog(self)
+        response = tempchart_dialog.run()
+        tempchart_dialog.destroy()
 
     def settings_btn_clicked(self, widget):  # @UnusedVariable
         settings_dialog = SettingsDialog(self)
