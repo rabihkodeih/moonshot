@@ -23,13 +23,12 @@ def db_transaction(func):
     @wraps(func)
     def wrapper(*args, **kwargs):
         sql_file = os.path.join(BASE_DIR, '%s.sqlite' % DB_CONFIG['DB_NAME'])
-        DB_LOCK.acquire()
-        conn = sqlite3.connect(sql_file, detect_types=sqlite3.PARSE_DECLTYPES)
-        cursor = conn.cursor()
-        result = func(cursor, *args, **kwargs)
-        conn.commit()
-        conn.close()
-        DB_LOCK.release()
+        with DB_LOCK:
+            conn = sqlite3.connect(sql_file, detect_types=sqlite3.PARSE_DECLTYPES)
+            cursor = conn.cursor()
+            result = func(cursor, *args, **kwargs)
+            conn.commit()
+            conn.close()
         return result
     return wrapper
 
